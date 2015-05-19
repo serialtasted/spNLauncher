@@ -357,6 +357,7 @@
     <None Include="Resources\transfer.png" />
     <None Include="Resources\eye.png" />
     <None Include="Resources\flash-on.png" />
+    <None Include="Resources\git-square.png" />
     <Content Include="spn_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1431,7 +1431,7 @@ namespace spNLauncherArma3
             {
                 btn_Launch.Enabled = true;
                 txt_progressStatus.Text = "Failed to download the requires files. The host might be down...";
-                eReport.sendReport("The host is down. People can't download the addons.");
+                eReport.sendReport("The host is down for " + System.Environment.MachineName + ". People can't download the addons.");
             }
             if (e.Cancelled)
             {
@@ -1821,9 +1821,9 @@ namespace spNLauncherArma3
             Process.Start("https://www.youtube.com/serialtasted");
         }
 
-        private void btn_goFacebook_Click(object sender, EventArgs e)
+        private void btn_goGit_Click(object sender, EventArgs e)
         {
-            //Not yet
+            Process.Start("https://github.com/serialtasted/spNLauncher");
         }
 
         private void btn_downloadJSRS_Click(object sender, EventArgs e)
