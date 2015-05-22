@@ -5,7 +5,6 @@ This launcher is used by the spN Team. The launcher enables us to launch a bunch
 [![GitHub release](https://img.shields.io/github/release/serialtasted/spNLauncher.svg?label=Download&color=blue)](https://github.com/serialtasted/spNLauncher/releases)
 [![GitHub source](https://img.shields.io/badge/Source-Download%20ZIP-orange.svg)](https://github.com/serialtasted/spNLauncher/archive/master.zip)
 [![GitHub issues](https://img.shields.io/github/issues/serialtasted/spNLauncher.svg?label=Issues)](https://github.com/serialtasted/spNLauncher/issues)
-[![AppVeyor](https://img.shields.io/appveyor/ci/serialtasted/spnlauncher.svg?label=Build)](https://ci.appveyor.com/project/serialtasted/spnlauncher)
 
 ###Features
 * Multiple addon packs
