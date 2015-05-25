@@ -275,11 +275,11 @@
             // 
             // Panels
             // 
-            this.Panels.Controls.Add(this.panel_about);
-            this.Panels.Controls.Add(this.panel_help);
             this.Panels.Controls.Add(this.panel_launchOptions);
             this.Panels.Controls.Add(this.panel_community);
             this.Panels.Controls.Add(this.panel_news);
+            this.Panels.Controls.Add(this.panel_about);
+            this.Panels.Controls.Add(this.panel_help);
             this.Panels.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Panels.Location = new System.Drawing.Point(0, 131);
             this.Panels.Name = "Panels";
@@ -919,13 +919,14 @@
             // 
             // panel_Optional
             // 
+            this.panel_Optional.BackgroundImage = global::spNLauncherArma3.Properties.Resources.optionalAddons_fw;
             this.panel_Optional.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.panel_Optional.Controls.Add(this.pictureBox1);
             this.panel_Optional.Controls.Add(this.lstb_activeAddons);
             this.panel_Optional.Controls.Add(this.btn_deactivateAddon);
             this.panel_Optional.Controls.Add(this.btn_activateAddon);
-            this.panel_Optional.Controls.Add(this.pictureBox2);
             this.panel_Optional.Controls.Add(this.lstb_detectedAddons);
+            this.panel_Optional.Controls.Add(this.pictureBox2);
+            this.panel_Optional.Controls.Add(this.pictureBox1);
             this.panel_Optional.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_Optional.Location = new System.Drawing.Point(0, 23);
             this.panel_Optional.Name = "panel_Optional";
@@ -934,9 +935,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::spNLauncherArma3.Properties.Resources.flash_on;
-            this.pictureBox1.Location = new System.Drawing.Point(444, 49);
+            this.pictureBox1.Location = new System.Drawing.Point(260, 1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(24, 24);
             this.pictureBox1.TabIndex = 12;
@@ -965,9 +966,9 @@
             this.btn_deactivateAddon.Font = new System.Drawing.Font("Arial Narrow", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_deactivateAddon.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.btn_deactivateAddon.Image = global::spNLauncherArma3.Properties.Resources.keyboard_arrow_left;
-            this.btn_deactivateAddon.Location = new System.Drawing.Point(237, 38);
+            this.btn_deactivateAddon.Location = new System.Drawing.Point(240, 43);
             this.btn_deactivateAddon.Name = "btn_deactivateAddon";
-            this.btn_deactivateAddon.Size = new System.Drawing.Size(23, 23);
+            this.btn_deactivateAddon.Size = new System.Drawing.Size(16, 16);
             this.btn_deactivateAddon.TabIndex = 8;
             this.btn_deactivateAddon.UseVisualStyleBackColor = false;
             this.btn_deactivateAddon.Click += new System.EventHandler(this.btn_deactivateAddon_Click);
@@ -983,18 +984,18 @@
             this.btn_activateAddon.Font = new System.Drawing.Font("Arial Narrow", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_activateAddon.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.btn_activateAddon.Image = global::spNLauncherArma3.Properties.Resources.keyboard_arrow_right;
-            this.btn_activateAddon.Location = new System.Drawing.Point(237, 15);
+            this.btn_activateAddon.Location = new System.Drawing.Point(240, 20);
             this.btn_activateAddon.Name = "btn_activateAddon";
-            this.btn_activateAddon.Size = new System.Drawing.Size(23, 23);
+            this.btn_activateAddon.Size = new System.Drawing.Size(16, 16);
             this.btn_activateAddon.TabIndex = 7;
             this.btn_activateAddon.UseVisualStyleBackColor = false;
             this.btn_activateAddon.Click += new System.EventHandler(this.btn_activateAddon_Click);
             // 
             // pictureBox2
             // 
-            this.pictureBox2.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::spNLauncherArma3.Properties.Resources.eye;
-            this.pictureBox2.Location = new System.Drawing.Point(175, 49);
+            this.pictureBox2.Location = new System.Drawing.Point(213, 56);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(24, 24);
             this.pictureBox2.TabIndex = 13;
@@ -1092,6 +1093,7 @@
             this.btn_ereaseModsDirectory.FlatAppearance.MouseOverBackColor = System.Drawing.Color.WhiteSmoke;
             this.btn_ereaseModsDirectory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_ereaseModsDirectory.ForeColor = System.Drawing.Color.DarkGray;
+            this.btn_ereaseModsDirectory.Image = global::spNLauncherArma3.Properties.Resources.circle_with_cross;
             this.btn_ereaseModsDirectory.Location = new System.Drawing.Point(811, 34);
             this.btn_ereaseModsDirectory.Name = "btn_ereaseModsDirectory";
             this.btn_ereaseModsDirectory.Size = new System.Drawing.Size(20, 20);
@@ -1113,6 +1115,7 @@
             // 
             // txtb_modsDirectory
             // 
+            this.txtb_modsDirectory.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_modsDirectory.Location = new System.Drawing.Point(398, 33);
             this.txtb_modsDirectory.Name = "txtb_modsDirectory";
             this.txtb_modsDirectory.Size = new System.Drawing.Size(435, 22);
@@ -1179,7 +1182,7 @@
             // 
             this.txtb_maxMem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtb_maxMem.BackColor = System.Drawing.SystemColors.Control;
+            this.txtb_maxMem.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_maxMem.Enabled = false;
             this.txtb_maxMem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtb_maxMem.Location = new System.Drawing.Point(109, 45);
@@ -1230,7 +1233,7 @@
             // txtb_world
             // 
             this.txtb_world.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtb_world.BackColor = System.Drawing.SystemColors.Control;
+            this.txtb_world.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_world.Enabled = false;
             this.txtb_world.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtb_world.Location = new System.Drawing.Point(109, 11);
@@ -1241,7 +1244,7 @@
             // txtb_maxVRAM
             // 
             this.txtb_maxVRAM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtb_maxVRAM.BackColor = System.Drawing.SystemColors.Control;
+            this.txtb_maxVRAM.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_maxVRAM.Enabled = false;
             this.txtb_maxVRAM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtb_maxVRAM.Location = new System.Drawing.Point(420, 11);
@@ -1251,7 +1254,7 @@
             // 
             // txtb_cpuCount
             // 
-            this.txtb_cpuCount.BackColor = System.Drawing.SystemColors.Control;
+            this.txtb_cpuCount.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_cpuCount.Enabled = false;
             this.txtb_cpuCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtb_cpuCount.Location = new System.Drawing.Point(420, 77);
@@ -1263,7 +1266,7 @@
             // 
             this.txtb_exThreads.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtb_exThreads.BackColor = System.Drawing.SystemColors.Control;
+            this.txtb_exThreads.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_exThreads.Enabled = false;
             this.txtb_exThreads.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtb_exThreads.Location = new System.Drawing.Point(420, 45);
@@ -1276,7 +1279,7 @@
             // 
             this.txtb_malloc.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.txtb_malloc.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.txtb_malloc.BackColor = System.Drawing.SystemColors.Control;
+            this.txtb_malloc.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtb_malloc.Enabled = false;
             this.txtb_malloc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtb_malloc.FormattingEnabled = true;
