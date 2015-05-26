@@ -59,6 +59,8 @@ namespace spNLauncherArma3
         private string blastcoreUrl = "";
         private string jsrsUrl = "";
         private Queue<string> downloadUrls = new Queue<string>();
+        private int numDownloads = 0;
+        private int numDownloaded = 0;
 
         Stopwatch sw = new Stopwatch();
         string aux_downSpeed = "0.00";
@@ -1397,6 +1399,9 @@ namespace spNLauncherArma3
             if (cfgUrl != "")
                 downloadUrls.Enqueue(cfgUrl);
 
+            numDownloads = downloadUrls.Count;
+            numDownloaded = 1;
+
             Directory.CreateDirectory(Path_TempDownload);
             downloadFile();
         }
@@ -1416,6 +1421,7 @@ namespace spNLauncherArma3
 
                 client.DownloadFileAsync(new Uri(url), Path_TempDownload + dfileName);
                 txt_progressStatus.Tag = dfileName;
+                numDownloaded++;
                 return;
             }
 
@@ -1457,7 +1463,7 @@ namespace spNLauncherArma3
                 else
                     aux_downSpeed = (e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds).ToString("0") + " kb/s";
 
-                progressStatusText("Downloading " + txt_progressStatus.Tag.ToString() + "... " + e.ProgressPercentage + "%");
+                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + e.ProgressPercentage + "%");
                 txt_percentageStatus.Text = ConvertBytesToMegabytes(e.BytesReceived) + "MB of " + ConvertBytesToMegabytes(e.TotalBytesToReceive) + "MB / " + aux_downSpeed;
             }
             else
@@ -1533,7 +1539,9 @@ namespace spNLauncherArma3
                                 {
                                     filePath = Path.Combine(aux_ModsFolder, entry.FullName).Replace(@"/", @"\\").Replace(@"\\", @"\");
 
-                                    //MessageBox.Show(entry.FullName);
+                                    string[] aux_topFolder = entry.FullName.Split('/');
+                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])))
+                                        Directory.CreateDirectory(Path.Combine(aux_ModsFolder, aux_topFolder[0]));
 
                                     if (!entry.FullName.Contains(@"\."))
                                     {
