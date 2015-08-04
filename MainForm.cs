@@ -479,12 +479,12 @@ namespace spNLauncherArma3
                 isJSRSAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["jsrs"].Value);
                 isOptionalAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["optional"].Value);
 
-                if (isBlastcoreAllowed)
+                if (isBlastcoreAllowed && chb_blastcore.Tag?.ToString() != "")
                 { chb_blastcore.Enabled = true; }
                 else
                 { chb_blastcore.Enabled = false; chb_blastcore.Checked = false; }
 
-                if (isJSRSAllowed)
+                if (isJSRSAllowed && chb_blastcore.Tag?.ToString() != "")
                 { chb_jsrs.Enabled = true; }
                 else
                 { chb_jsrs.Enabled = false; chb_jsrs.Checked = false; }
@@ -572,8 +572,8 @@ namespace spNLauncherArma3
 
                 if (subDirs.Length == 0)
                 {
-                    chb_jsrs.Tag = "";
-                    chb_blastcore.Tag = "";
+                    chb_jsrs.Tag = ""; chb_jsrs.Enabled = false; chb_jsrs.Checked = false;
+                    chb_blastcore.Tag = ""; chb_blastcore.Enabled = false; chb_blastcore.Checked = false;
                 }
                 else
                 {
@@ -585,7 +585,7 @@ namespace spNLauncherArma3
                             chb_jsrs.Tag = Path.GetFileName(dir.Name);
                             break;
                         }
-                        else { chb_jsrs.Tag = ""; }
+                        else { chb_jsrs.Tag = ""; chb_jsrs.Enabled = false; chb_jsrs.Checked = false; }
                     }
 
                     foreach (DirectoryInfo dir in addonDir.GetDirectories())
@@ -596,7 +596,7 @@ namespace spNLauncherArma3
                             chb_blastcore.Tag = Path.GetFileName(dir.Name);
                             break;
                         }
-                        else { chb_blastcore.Tag = ""; }
+                        else { chb_blastcore.Tag = ""; chb_blastcore.Enabled = false; chb_blastcore.Checked = false; }
                     }
 
                     foreach (DirectoryInfo dir in addonDir.GetDirectories())
@@ -781,7 +781,7 @@ namespace spNLauncherArma3
 
         private void btn_browseA3_Click(object sender, EventArgs e)
         {
-            try
+           /* try
             {
                 Properties.Settings.Default.Arma3Folder = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\bohemia interactive\arma 3", "main", "") + @"\";
                 Properties.Settings.Default.Save();
@@ -792,7 +792,7 @@ namespace spNLauncherArma3
                 { txtb_armaDirectory.ForeColor = Color.DarkGray; txtb_armaDirectory.Text = "Set directory ->"; }
             }
             catch
-            {
+            {*/
                 #region Arma Directory Validation
                 if (dlg_folderBrowser.ShowDialog() == DialogResult.OK)
                 {
@@ -814,7 +814,7 @@ namespace spNLauncherArma3
                         if (auxIsFolder)
                         {
                             txtb_armaDirectory.ForeColor = Color.FromArgb(64, 64, 64);
-                            Properties.Settings.Default.Arma3Folder = auxA3Folder + @"\";
+                            GameFolder = Properties.Settings.Default.Arma3Folder = auxA3Folder + @"\";
                             Properties.Settings.Default.Save();
                             txtb_armaDirectory.Text = auxA3Folder;
                         }
@@ -823,7 +823,7 @@ namespace spNLauncherArma3
                             MessageBox.Show("No Arma3 application found on that folder.\nMake sure that's the root folder.", "Not the correct folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                }
+                //}
                 #endregion
             }
         }
@@ -851,7 +851,7 @@ namespace spNLauncherArma3
                     if (auxIsFolder)
                     {
                         txtb_armaDirectory.ForeColor = Color.FromArgb(64, 64, 64);
-                        Properties.Settings.Default.Arma3Folder = auxA3Folder + @"\";
+                        GameFolder = Properties.Settings.Default.Arma3Folder = auxA3Folder + @"\";
                         Properties.Settings.Default.Save();
                         txtb_armaDirectory.Text = auxA3Folder;
                     }
@@ -866,7 +866,7 @@ namespace spNLauncherArma3
 
         private void btn_browseTS3_Click(object sender, EventArgs e)
         {
-            try
+            /*try
             {
                 string tsKey = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\TeamSpeak 3 Client", "", "");
                 if (tsKey == null)
@@ -885,7 +885,7 @@ namespace spNLauncherArma3
                 { txtb_tsDirectory.ForeColor = Color.DarkGray; txtb_tsDirectory.Text = "Set directory ->"; }
             }
             catch
-            {
+            {*/
                 #region TS Directory Validation
                 if (dlg_folderBrowser.ShowDialog() == DialogResult.OK)
                 {
@@ -916,7 +916,7 @@ namespace spNLauncherArma3
                             MessageBox.Show("No TeamSpeak 3 application found on that folder.\nMake sure that's the root folder.", "Not the correct folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                }
+                //}
                 #endregion
             }
         }
@@ -1308,7 +1308,7 @@ namespace spNLauncherArma3
 
         private void btn_ereaseArmaDirectory_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Arma3Folder = "";
+            GameFolder = Properties.Settings.Default.Arma3Folder = "";
             Properties.Settings.Default.Save();
 
             txtb_armaDirectory.ForeColor = Color.DarkGray; txtb_armaDirectory.Text = "Set directory ->";
@@ -1675,6 +1675,7 @@ namespace spNLauncherArma3
 
             if (!e.Cancelled && isLaunch)
             {
+                isLaunch = false;
                 prb_progressBar.Style = ProgressBarStyle.Marquee;
                 prb_progressBar.Value = 50;
                 txt_progressStatus.Text = "Launching game...";
