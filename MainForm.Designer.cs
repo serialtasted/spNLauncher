@@ -2044,6 +2044,7 @@
             this.prb_progressBar.ContainerControl = this;
             this.prb_progressBar.Location = new System.Drawing.Point(22, 50);
             this.prb_progressBar.Name = "prb_progressBar";
+            this.prb_progressBar.ShowInTaskbar = true;
             this.prb_progressBar.Size = new System.Drawing.Size(718, 23);
             this.prb_progressBar.TabIndex = 10;
             // 
