@@ -1958,7 +1958,7 @@
             this.btn_reinstallTFRPlugins,
             this.menu_AddonPacks});
             this.menu_moreOptions.Name = "menu_moreOptions";
-            this.menu_moreOptions.Size = new System.Drawing.Size(184, 70);
+            this.menu_moreOptions.Size = new System.Drawing.Size(184, 92);
             // 
             // menu_RemoteSettings
             // 
