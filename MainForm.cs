@@ -528,7 +528,9 @@ namespace spNLauncherArma3
 
                                             if (aRemote != aLocal)
                                             {
-                                                Directory.Delete(d, true);
+                                                if (!d.Contains("RHS"))
+                                                    Directory.Delete(d, true);
+
                                                 isInstalled = false;
                                                 break;
                                             }
@@ -1294,7 +1296,7 @@ namespace spNLauncherArma3
                 Arguments = PrepareLaunch.GetArguments();
                 SaveSettings();
 
-                if (PrepareLaunch.isModPackInstalled(modsName))
+                if (PrepareLaunch.isModPackInstalled(modsName, modsUrl))
                     PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
                 else
                     downloadFile(modsUrl);
@@ -1346,6 +1348,16 @@ namespace spNLauncherArma3
             {
                 this.txt_curFile.Text = text;
             }
+        }
+
+        private void progressBarStyle(ProgressBarStyle prbStyle)
+        {
+                this.prb_progressBar.Style = prbStyle;
+        }
+
+        private void progressBarState(ProgressBarState prbState)
+        {
+                this.prb_progressBar.State = prbState;
         }
 
         private void progressBarValue(int prbValue)
@@ -1515,6 +1527,8 @@ namespace spNLauncherArma3
             Thread.Sleep(10);
 
             bool isTFR = false;
+            bool isRHS_AFRF = false;
+            bool isRHS_USF = false;
             bool allFine = true;
             string aux_ModsFolder = AddonsFolder;
 
@@ -1527,6 +1541,12 @@ namespace spNLauncherArma3
                         {
                             if (zipFile.Contains("task_force_radio"))
                                 isTFR = true;
+
+                            if (zipFile.Contains("RHSAFRF"))
+                                isRHS_AFRF = true;
+
+                            if (zipFile.Contains("RHSUSF"))
+                                isRHS_USF = true;
 
                             progressStatusText("Extracting new files...");
 
@@ -1596,6 +1616,7 @@ namespace spNLauncherArma3
                 progressBarValue(100);
                 Thread.Sleep(2000);
 
+                #region isTFR
                 if (isTFR)
                 {
                     bool awaitTSPlugin = true;
@@ -1638,11 +1659,59 @@ namespace spNLauncherArma3
                         }
                     } while (awaitTSPlugin);
                 }
+                #endregion
 
+                #region isRHS_AFRF
+                if (isRHS_AFRF)
+                {
+                    try
+                    {
+                        var fass = new ProcessStartInfo();
+                        fass.WorkingDirectory = AddonsFolder + "@RHSAFRF";
+                        fass.FileName = "update_rhsafrf.bat";
+
+                        var process = new Process();
+                        process.StartInfo = fass;
+                        process.Start();
+
+                        progressStatusText("Installing RHS AFRF...");
+                        progressBarStyle(ProgressBarStyle.Marquee);
+                        process.WaitForExit();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+                #endregion
+
+                #region isRHS_USF
+                if (isRHS_USF)
+                {
+                    try
+                    {
+                        var fass = new ProcessStartInfo();
+                        fass.WorkingDirectory = AddonsFolder + "@RHSUSF";
+                        fass.FileName = "update_rhsusf.bat";
+
+                        var process = new Process();
+                        process.StartInfo = fass;
+                        process.Start();
+
+                        progressStatusText("Installing RHS USF...");
+                        progressBarStyle(ProgressBarStyle.Marquee);
+                        process.WaitForExit();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                } 
+                #endregion
             }
             catch (Exception ex)
             {
-                prb_progressBar.State = ProgressBarState.Error;
+                progressBarState(ProgressBarState.Error);
                 e.Cancel = true;
                 allFine = false;
                 progressStatusText("Something went wrong. Please try again.");
@@ -1652,8 +1721,6 @@ namespace spNLauncherArma3
             {
                 if (allFine)
                     progressStatusText("Installation completed successfully. Cleaning up...");
-
-                prb_progressBar.State = ProgressBarState.Normal;
 
                 if (Directory.Exists(AddonsFolder + @"@task_force_radio\plugins"))
                     btn_reinstallTFRPlugins.Enabled = true;
@@ -1666,6 +1733,8 @@ namespace spNLauncherArma3
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            prb_progressBar.State = ProgressBarState.Normal;
+
             try
             {
                 if (Directory.Exists(Path_TempDownload))
@@ -1690,6 +1759,7 @@ namespace spNLauncherArma3
 
 
             prb_progressBar.Value = 0;
+            prb_progressBar.State = ProgressBarState.Normal;
             prb_progressBar.Style = ProgressBarStyle.Continuous;
             btn_Launch.Enabled = true;
 
