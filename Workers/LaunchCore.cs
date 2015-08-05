@@ -95,7 +95,7 @@ namespace spNLauncherArma3.Workers
 
             //MessageBox.Show(s_modsFolder);
 
-            if (activeAddons.Items.Count > 0)
+            if (activeAddons.Items.Count > 0 && activeAddons.Enabled)
             {
                 do
                 {

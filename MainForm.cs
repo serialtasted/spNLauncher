@@ -1290,7 +1290,7 @@ namespace spNLauncherArma3
                     chb_blastcore.Tag.ToString(),
                     lstb_activeAddons,
                     modsName);
-
+                
                 Arguments = PrepareLaunch.GetArguments();
                 SaveSettings();
 
