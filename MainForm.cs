@@ -12,12 +12,9 @@ using System.Net;
 using System.Diagnostics;
 using System.Xml;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Net.Mail;
 
 using spNLauncherArma3.Controls;
 using spNLauncherArma3.Workers;
-using System.Security.Permissions;
 
 namespace spNLauncherArma3
 {
@@ -1522,7 +1519,6 @@ namespace spNLauncherArma3
             }
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]
         private async void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Thread.Sleep(10);
@@ -2040,7 +2036,6 @@ namespace spNLauncherArma3
             MessageBox.Show("Temp Path: " + Path_TempDownload + "\nConfig File: " + cfgFile + "\nGame Server: " + serverIp + ":" + serverPort + "\n\nActive Mods:" + aux_listMods, "Fetched remote settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]
         private void btn_reinstallTFRPlugins_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(AddonsFolder + @"@task_force_radio\plugins"))
