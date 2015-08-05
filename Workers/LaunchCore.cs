@@ -95,7 +95,7 @@ namespace spNLauncherArma3.Workers
 
             //MessageBox.Show(s_modsFolder);
 
-            if (activeAddons.Items.Count > 0)
+            if (activeAddons.Items.Count > 0 && activeAddons.Enabled)
             {
                 do
                 {
@@ -173,7 +173,7 @@ namespace spNLauncherArma3.Workers
             return Arguments;
         }
         
-        public bool isModPackInstalled(List<string> modsList)
+        public bool isModPackInstalled(List<string> modsList, List<string> modsUrl)
         {
             bool aux_isAll = false;
 
@@ -192,7 +192,7 @@ namespace spNLauncherArma3.Workers
                     break;
             }
 
-            if (aux_isAll) return true;
+            if (aux_isAll && modsUrl.Count == 0) return true;
             else return false;
         }
 
@@ -221,7 +221,7 @@ namespace spNLauncherArma3.Workers
 
             //Clipboard.SetText(aux_Arguments);
 
-            try
+            /*try
             {
                 var fass = new ProcessStartInfo();
                 fass.WorkingDirectory = TSFolder;
@@ -240,7 +240,7 @@ namespace spNLauncherArma3.Workers
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
+            }*/
 
             try
             {
@@ -259,9 +259,9 @@ namespace spNLauncherArma3.Workers
 
                 Status.Text = "Game running...";
                 Launch.Enabled = false;
-                mainForm.Hide();
+                mainForm.WindowState = FormWindowState.Minimized;
                 process.WaitForExit();
-                mainForm.Show();
+                mainForm.WindowState = FormWindowState.Normal;
                 Launch.Enabled = true;
                 Status.Text = "Waiting for orders...";
 
