@@ -1411,7 +1411,7 @@ namespace spNLauncherArma3
                 else
                     aux_downSpeed = (e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds).ToString("0") + " kb/s";
 
-                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + e.ProgressPercentage + "%");
+                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0) + "%");
                 txt_percentageStatus.Text = ConvertBytesToMegabytes(e.BytesReceived) + "MB of " + ConvertBytesToMegabytes(bytes_total) + "MB / " + aux_downSpeed;
             }
             else
