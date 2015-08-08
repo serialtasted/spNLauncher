@@ -27,10 +27,10 @@ namespace spNLauncherArma3.Workers
                 XmlDocument RemoteXmlInfo = new XmlDocument();
                 RemoteXmlInfo.Load(Properties.GlobalValues.S_VersionXML);
 
-                XmlNodeList xnl = RemoteXmlInfo.SelectNodes("//spN_Launcher//ModSets//modset");
+                XmlNodeList xnl = RemoteXmlInfo.SelectNodes("//spN_Launcher//ModSets//pack");
                 foreach (XmlNode xn in xnl)
                 {
-                    ToolStripMenuItem menuItem = new ToolStripMenuItem(xn.Attributes["name"].Value);
+                    ToolStripMenuItem menuItem = new ToolStripMenuItem(xn.Attributes["id"].Value);
                     menuItem.Click += MenuItem_Click;
 
                     if (menuItem.Text == Properties.Settings.Default.lastAddonPack)
@@ -63,7 +63,7 @@ namespace spNLauncherArma3.Workers
             }
 
             formMain.FetchRemoteSettings();
-            formMain.getAddons();
+            formMain.GetAddons();
         }
     }
 }

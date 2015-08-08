@@ -28,87 +28,133 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackBlock));
             this.txt_title = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.chb_useThis = new System.Windows.Forms.CheckBox();
-            this.pic_packThumb = new System.Windows.Forms.PictureBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.panel_bgTitle = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.txt_version = new System.Windows.Forms.Label();
+            this.txt_content = new System.Windows.Forms.Label();
+            this.img_checkAllowed = new System.Windows.Forms.PictureBox();
+            this.btn_useThis = new System.Windows.Forms.PictureBox();
+            this.txt_allowed = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pic_packThumb)).BeginInit();
+            this.panel_bgTitle.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.img_checkAllowed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_useThis)).BeginInit();
             this.SuspendLayout();
             // 
             // txt_title
             // 
             this.txt_title.AutoSize = true;
             this.txt_title.BackColor = System.Drawing.Color.Transparent;
-            this.txt_title.Font = new System.Drawing.Font("Meiryo UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_title.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_title.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.txt_title.Location = new System.Drawing.Point(263, 17);
+            this.txt_title.Location = new System.Drawing.Point(7, 10);
             this.txt_title.Name = "txt_title";
-            this.txt_title.Size = new System.Drawing.Size(63, 15);
+            this.txt_title.Size = new System.Drawing.Size(52, 15);
             this.txt_title.TabIndex = 0;
             this.txt_title.Text = "%Title%";
+            this.txt_title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.txt_title);
-            this.panel1.Controls.Add(this.chb_useThis);
-            this.panel1.Controls.Add(this.pic_packThumb);
+            this.panel1.Controls.Add(this.img_checkAllowed);
+            this.panel1.Controls.Add(this.btn_useThis);
+            this.panel1.Controls.Add(this.panel_bgTitle);
+            this.panel1.Controls.Add(this.txt_content);
+            this.panel1.Controls.Add(this.txt_allowed);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(860, 174);
             this.panel1.TabIndex = 6;
             // 
-            // chb_useThis
+            // panel_bgTitle
             // 
-            this.chb_useThis.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chb_useThis.AutoSize = true;
-            this.chb_useThis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.chb_useThis.Location = new System.Drawing.Point(759, 15);
-            this.chb_useThis.MinimumSize = new System.Drawing.Size(90, 30);
-            this.chb_useThis.Name = "chb_useThis";
-            this.chb_useThis.Size = new System.Drawing.Size(90, 30);
-            this.chb_useThis.TabIndex = 8;
-            this.chb_useThis.Text = "Use this pack";
-            this.chb_useThis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chb_useThis.UseVisualStyleBackColor = true;
+            this.panel_bgTitle.BackColor = System.Drawing.Color.DimGray;
+            this.panel_bgTitle.Controls.Add(this.panel2);
+            this.panel_bgTitle.Controls.Add(this.txt_title);
+            this.panel_bgTitle.Controls.Add(this.txt_version);
+            this.panel_bgTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel_bgTitle.Location = new System.Drawing.Point(0, 0);
+            this.panel_bgTitle.Name = "panel_bgTitle";
+            this.panel_bgTitle.Size = new System.Drawing.Size(860, 38);
+            this.panel_bgTitle.TabIndex = 12;
             // 
-            // pic_packThumb
+            // panel2
             // 
-            this.pic_packThumb.Location = new System.Drawing.Point(12, 15);
-            this.pic_packThumb.Name = "pic_packThumb";
-            this.pic_packThumb.Size = new System.Drawing.Size(245, 144);
-            this.pic_packThumb.TabIndex = 7;
-            this.pic_packThumb.TabStop = false;
+            this.panel2.BackColor = System.Drawing.Color.Brown;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 34);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(860, 4);
+            this.panel2.TabIndex = 11;
             // 
-            // textBox1
+            // txt_version
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.textBox1.Location = new System.Drawing.Point(263, 51);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(586, 108);
-            this.textBox1.TabIndex = 9;
+            this.txt_version.AutoSize = true;
+            this.txt_version.BackColor = System.Drawing.Color.Transparent;
+            this.txt_version.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_version.ForeColor = System.Drawing.Color.Gray;
+            this.txt_version.Location = new System.Drawing.Point(703, 11);
+            this.txt_version.MinimumSize = new System.Drawing.Size(150, 0);
+            this.txt_version.Name = "txt_version";
+            this.txt_version.Size = new System.Drawing.Size(150, 13);
+            this.txt_version.TabIndex = 10;
+            this.txt_version.Text = "%Version%";
+            this.txt_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label1
+            // txt_content
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Meiryo UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.label1.Location = new System.Drawing.Point(263, 32);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 14);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "%Version%";
+            this.txt_content.AutoSize = true;
+            this.txt_content.BackColor = System.Drawing.Color.Transparent;
+            this.txt_content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_content.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.txt_content.Location = new System.Drawing.Point(30, 61);
+            this.txt_content.MaximumSize = new System.Drawing.Size(800, 0);
+            this.txt_content.MinimumSize = new System.Drawing.Size(800, 52);
+            this.txt_content.Name = "txt_content";
+            this.txt_content.Size = new System.Drawing.Size(800, 52);
+            this.txt_content.TabIndex = 11;
+            this.txt_content.Text = "%Content%\r\n";
+            // 
+            // img_checkAllowed
+            // 
+            this.img_checkAllowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.img_checkAllowed.BackgroundImage = global::spNLauncherArma3.Properties.Resources.check_circle;
+            this.img_checkAllowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.img_checkAllowed.Location = new System.Drawing.Point(11, 143);
+            this.img_checkAllowed.Name = "img_checkAllowed";
+            this.img_checkAllowed.Size = new System.Drawing.Size(12, 13);
+            this.img_checkAllowed.TabIndex = 14;
+            this.img_checkAllowed.TabStop = false;
+            this.img_checkAllowed.Visible = false;
+            // 
+            // btn_useThis
+            // 
+            this.btn_useThis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_useThis.Image = ((System.Drawing.Image)(resources.GetObject("btn_useThis.Image")));
+            this.btn_useThis.Location = new System.Drawing.Point(755, 129);
+            this.btn_useThis.Name = "btn_useThis";
+            this.btn_useThis.Size = new System.Drawing.Size(100, 40);
+            this.btn_useThis.TabIndex = 13;
+            this.btn_useThis.TabStop = false;
+            this.btn_useThis.Click += new System.EventHandler(this.btn_useThis_Click);
+            this.btn_useThis.MouseLeave += new System.EventHandler(this.btn_useThis_MouseLeave);
+            this.btn_useThis.MouseHover += new System.EventHandler(this.btn_useThis_MouseHover);
+            // 
+            // txt_allowed
+            // 
+            this.txt_allowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txt_allowed.AutoSize = true;
+            this.txt_allowed.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.txt_allowed.Location = new System.Drawing.Point(23, 143);
+            this.txt_allowed.Name = "txt_allowed";
+            this.txt_allowed.Size = new System.Drawing.Size(54, 13);
+            this.txt_allowed.TabIndex = 15;
+            this.txt_allowed.Text = "Allowed: ";
+            this.txt_allowed.Visible = false;
             // 
             // PackBlock
             // 
@@ -124,7 +170,10 @@
             this.Size = new System.Drawing.Size(860, 174);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pic_packThumb)).EndInit();
+            this.panel_bgTitle.ResumeLayout(false);
+            this.panel_bgTitle.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.img_checkAllowed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_useThis)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -133,9 +182,12 @@
 
         private System.Windows.Forms.Label txt_title;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.PictureBox pic_packThumb;
-        private System.Windows.Forms.CheckBox chb_useThis;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label txt_version;
+        private System.Windows.Forms.Label txt_content;
+        private System.Windows.Forms.Panel panel_bgTitle;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.PictureBox btn_useThis;
+        private System.Windows.Forms.PictureBox img_checkAllowed;
+        private System.Windows.Forms.Label txt_allowed;
     }
 }

@@ -4,72 +4,77 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Xml.Linq;
 
 using spNLauncherArma3.Controls;
 using System.Net;
+using System.Xml;
 
 namespace spNLauncherArma3.Workers
 {
     class Packs
     {
         private readonly FlowLayoutPanel gflowpacks;
-        private readonly string gpsource;
+        private string title = "";
+        private string id = "";
+        private string description = "";
+        private string addons = "";
 
-        private readonly string gtitle;
-        private readonly string glabel;
-
-        public Packs(FlowLayoutPanel PacksPanel, string PacksSource)
+        public Packs(FlowLayoutPanel PacksPanel)
         {
             gflowpacks = PacksPanel;
-            gpsource = PacksSource;
-
-            GetPacks();
         }
 
-        private void GetPacks()
+        public void Get ()
         {
             try
             {
                 gflowpacks.Controls.Clear();
 
-                int forCount = 0;
-                bool warningactive = false;
-                bool hidecontent = false;
-                XDocument xdoc = XDocument.Load(gpsource);
+                XmlDocument RemoteXmlInfo = new XmlDocument();
+                RemoteXmlInfo.Load(Properties.GlobalValues.S_VersionXML);
 
-                foreach (var feedxml in xdoc.Descendants("FeedItem"))
+                XmlNodeList xnl = RemoteXmlInfo.SelectNodes("//spN_Launcher//ModSets//pack");
+                foreach (XmlNode xn in xnl)
                 {
-                    try
-                    {
-                        warningactive = Convert.ToBoolean(feedxml.Element("Active").Value);
-                        
-                        if(warningactive)
-                            hidecontent = Convert.ToBoolean(feedxml.Element("HideContent").Value);
-                    }
-                    catch
-                    {
-                        warningactive = false;
-                    }
+                    title = xn.Attributes["name"].Value;
+                    id = xn.Attributes["id"].Value;
+                    description = xn.Attributes["description"].Value;
+                    addons = "";
+                    
 
-                    string title = feedxml.Element("Title").Value;
-                    string content = feedxml.Element("Content").Value;
-                    string linkname = feedxml.Element("LinkName").Value;
-                    string linkuri = feedxml.Element("LinkUrl").Value;
-                    string label = feedxml.Element("Label").Value;
-
-                    if (forCount == 0 && !warningactive)
-                    { forCount++; continue; }
-
-                    if (!hidecontent || (forCount == 0 && warningactive))
+                    XmlNodeList xnl2 = RemoteXmlInfo.SelectNodes("//spN_Launcher//ModSetInfo//" + id + "//mod");
+                    foreach (XmlNode xn2 in xnl2)
                     {
-                        if (linkname != "")
-                            gflowpacks.Controls.Add(new NewsBlock(title, content, linkname + " >", linkuri, label));
-                        else
-                            gflowpacks.Controls.Add(new NewsBlock(title, content, label));
+                        if (xn2.Attributes["type"].Value == "mod")
+                        {
+                            if (xn2.Attributes["name"].Value != "@dummy")
+                            {
+                                addons = addons +
+                                    " • " + xn2.Attributes["name"].Value + " (" + xn2.Attributes["version"].Value + ")" +
+                                    "\n";
+                            }
+                        }
                     }
 
-                    forCount++;
+                    PackBlock auxPack = new PackBlock(
+                        title, 
+                        id, 
+                        description, 
+                        addons, 
+                        gflowpacks, 
+                        Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + id).Attributes["blastcore"].Value), 
+                        Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + id).Attributes["jsrs"].Value), 
+                        Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + id).Attributes["optional"].Value));
+                    auxPack.Tag = id;
+
+                    if (id == Properties.Settings.Default.lastAddonPack)
+                    {
+                        PictureBox btnUsePack = auxPack.Controls.Find("btn_useThis", true)[0] as PictureBox;
+                        btnUsePack.Enabled = false;
+                        btnUsePack.Image = Properties.Resources.useThis_active;
+                    }
+
+                    gflowpacks.Controls.Add(auxPack);
                 }
 
                 Label Maring = new Label();
@@ -89,27 +94,10 @@ namespace spNLauncherArma3.Workers
                 ErrorRead.TextAlign = ContentAlignment.BottomCenter;
                 ErrorRead.Text = "Unable to read the contents from the server!\n" + ex.Message;
 
-                Button RefreshContent = new Button();
-                RefreshContent.Anchor = AnchorStyles.Top;
-                RefreshContent.Size = new Size(90, 30);
-                RefreshContent.TextAlign = ContentAlignment.MiddleRight;
-                RefreshContent.Image = Properties.Resources.reload;
-                RefreshContent.ImageAlign = ContentAlignment.MiddleLeft;
-                RefreshContent.ForeColor = Color.FromArgb(64, 64, 64);
-                RefreshContent.Text = "Reload";
-                RefreshContent.Click += RefreshContent_Click;
-                RefreshContent.Padding = new Padding(5, 0, 5, 0);
-
                 ErrorTable.Controls.Add(ErrorRead);
-                ErrorTable.Controls.Add(RefreshContent);
 
                 gflowpacks.Controls.Add(ErrorTable);
             }
-        }
-
-        void RefreshContent_Click(object sender, EventArgs e)
-        {
-            GetPacks();
         }
     }
 }
