@@ -37,6 +37,7 @@ namespace spNLauncherArma3
         private string modsDir_previousDir = "";
 
         private bool isLaunch = false;
+        private bool isDownloading = false;
 
         private string GameFolder = "";
         private string AddonsFolder = "";
@@ -1205,8 +1206,39 @@ namespace spNLauncherArma3
                 if (PrepareLaunch.isModPackInstalled(modsName, modsUrl))
                     PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
                 else
-                    downloadFile(modsUrl);
+                    downloadQueue.RunWorkerAsync();
             }
+        }
+
+        private void downloadQueue_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int go = 0;
+            int i = 1;
+            do
+            {
+                try
+                {
+                    NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
+                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
+                    request.Credentials = networkCredential;
+                    FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                    go = 1;
+                }
+                catch (Exception ex)
+                {
+                    progressStatusText("Download queue full. Retrying to download...");
+                    percentageStatusText("Attempts made: " + i);
+                    go = 0;
+                }
+
+                Thread.Sleep(10000);
+                i++;
+            } while (go == 0);
+        }
+
+        private void downloadQueue_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            downloadFile(modsUrl);
         }
 
         private void txtb_armaDirectory_TextChanged(object sender, EventArgs e)
@@ -1240,6 +1272,19 @@ namespace spNLauncherArma3
             else
             {
                 this.txt_progressStatus.Text = text;
+            }
+        }
+
+        private void percentageStatusText(string text)
+        {
+            if (this.txt_progressStatus.InvokeRequired)
+            {
+                stringCallBack d = new stringCallBack(percentageStatusText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.txt_percentageStatus.Text = text;
             }
         }
 
@@ -1307,6 +1352,7 @@ namespace spNLauncherArma3
 
         private void downloadFile(IEnumerable<string> urls)
         {
+            isDownloading = true;
             txt_progressStatus.Text = "Connecting to the host...";
 
             try
@@ -1328,6 +1374,7 @@ namespace spNLauncherArma3
             numDownloaded = 1;
 
             Directory.CreateDirectory(Path_TempDownload);
+
             downloadFile();
         }
 
@@ -1404,6 +1451,9 @@ namespace spNLauncherArma3
 
         void download_file_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            if (numDownloaded > numDownloads)
+                numDownloaded--;
+
             if (e.ProgressPercentage < 100)
             {
                 if ((e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds) > 999)
@@ -1425,6 +1475,7 @@ namespace spNLauncherArma3
 
         void Install()
         {
+            isDownloading = false;
             progressStatusText("Installing files...");
             prb_progressBar.Value = 0;
             prb_progressBar.Style = ProgressBarStyle.Marquee;
@@ -1843,20 +1894,34 @@ namespace spNLauncherArma3
 
         private void btn_downloadJSRS_Click(object sender, EventArgs e)
         {
-            modsUrl.Clear();
-            modsUrl.Add(jsrsUrl);
-            downloadFile(modsUrl);
-
-            btn_Launch.Enabled = false;
+            if (!isDownloading)
+            {
+                modsUrl.Clear();
+                modsUrl.Add(jsrsUrl);
+                downloadFile(modsUrl);
+                btn_Launch.Enabled = false;
+            }
+            else
+            {
+                numDownloads++;
+                downloadUrls.Enqueue(jsrsUrl);
+            }
         }
 
         private void btn_downloadBlastcore_Click(object sender, EventArgs e)
         {
-            modsUrl.Clear();
-            modsUrl.Add(blastcoreUrl);
-            downloadFile(modsUrl);
-
-            btn_Launch.Enabled = false;
+            if (!isDownloading)
+            {
+                modsUrl.Clear();
+                modsUrl.Add(blastcoreUrl);
+                downloadFile(modsUrl);
+                btn_Launch.Enabled = false;
+            }
+            else
+            {
+                numDownloads++;
+                downloadUrls.Enqueue(blastcoreUrl);
+            }
         }
 
         private void btn_ereaseModsDirectory_Click(object sender, EventArgs e)
