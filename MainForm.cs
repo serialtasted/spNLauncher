@@ -61,6 +61,11 @@ namespace spNLauncherArma3
         private int numDownloads = 0;
         private int numDownloaded = 0;
 
+        private long bytes_total = 0;
+        FtpWebRequest ftpRequest;
+        FtpWebResponse ftpResponse;
+        NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
+
         Stopwatch sw = new Stopwatch();
         string aux_downSpeed = "0.00";
 
@@ -1206,7 +1211,7 @@ namespace spNLauncherArma3
                 if (PrepareLaunch.isModPackInstalled(modsName, modsUrl))
                     PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
                 else
-                    downloadFile(modsUrl);
+                    downloadQueue.RunWorkerAsync();
             }
         }
 
@@ -1218,14 +1223,15 @@ namespace spNLauncherArma3
             {
                 try
                 {
-                    NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
-                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
-                    request.Credentials = networkCredential;
-                    FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                    ftpRequest = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
+                    ftpRequest.Credentials = networkCredential;
+                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+                    ftpResponse.Close();
                     go = 1;
                 }
                 catch (Exception ex)
                 {
+                    ftpResponse.Close();
                     progressStatusText("Download queue full. Retrying to download...");
                     percentageStatusText("Attempts made: " + i);
                     go = 0;
@@ -1378,8 +1384,6 @@ namespace spNLauncherArma3
             downloadFile();
         }
 
-        long bytes_total = 0;
-
         private void downloadFile()
         {
             if (downloadUrls.Count != 0)
@@ -1389,21 +1393,20 @@ namespace spNLauncherArma3
                 string dfileName = url.Substring(url.LastIndexOf("/") + 1,
                             (url.Length - url.LastIndexOf("/") - 1));
 
-                NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
-
                 try
                 {
-                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(url);
-                    request.Method = WebRequestMethods.Ftp.GetFileSize;
-                    request.Credentials = networkCredential;
-                    FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                    ftpRequest = (FtpWebRequest)WebRequest.Create(url);
+                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
+                    ftpRequest.Credentials = networkCredential;
+                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
 
-                    Stream responseStream = response.GetResponseStream();
-                    bytes_total = response.ContentLength;
-                    response.Close();
+                    Stream responseStream = ftpResponse.GetResponseStream();
+                    bytes_total = ftpResponse.ContentLength;
+                    ftpResponse.Close();
                 }
                 catch(Exception ex)
                 {
+                    ftpResponse.Close();
                     txt_progressStatus.Text = ex.Message;
                     btn_Launch.Enabled = true;
                     return;
