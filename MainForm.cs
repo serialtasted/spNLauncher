@@ -1206,7 +1206,7 @@ namespace spNLauncherArma3
                 if (PrepareLaunch.isModPackInstalled(modsName, modsUrl))
                     PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
                 else
-                    downloadQueue.RunWorkerAsync();
+                    downloadFile(modsUrl);
             }
         }
 
