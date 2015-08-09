@@ -1234,11 +1234,11 @@ namespace spNLauncherArma3
                     ftpRequest.Abort();
                     progressStatusText("Download queue full. Retrying to download...");
                     percentageStatusText("Attempts made: " + i);
-                    go = 0;
-                }
 
-                Thread.Sleep(10000);
-                i++;
+                    Thread.Sleep(10000);
+                    i++;
+                }
+                
             } while (go == 0);
         }
 
