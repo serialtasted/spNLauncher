@@ -243,7 +243,7 @@ namespace spNLauncherArma3
             this.Opacity = 1;
             FeedContentPanel.Focus();
 
-            if (Properties.Settings.Default.downloadQueue != "")
+            if (Properties.Settings.Default.downloadQueue != "" && panelMenu.Visible == true)
             {
                 if (MessageBox.Show("You haven't finished all the downloads the last time you closed the launcher.\n\"Yes\", to continue downloads.\n\"No\", will DELETE your progress.", "spN Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
@@ -266,7 +266,7 @@ namespace spNLauncherArma3
                         }
                     }
 
-                    downloadFile(modsUrl);
+                    downloadQueue.RunWorkerAsync();
                 }
                 else
                 {
