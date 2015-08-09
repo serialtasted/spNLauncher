@@ -418,5 +418,17 @@ namespace spNLauncherArma3.Properties {
                 this["lastAddonPack"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string downloadQueue {
+            get {
+                return ((string)(this["downloadQueue"]));
+            }
+            set {
+                this["downloadQueue"] = value;
+            }
+        }
     }
 }

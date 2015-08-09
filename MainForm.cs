@@ -21,23 +21,26 @@ namespace spNLauncherArma3
     public partial class MainForm : Form
     {
         //Feed FeedMethod;
-        zCheckUpdate QuickUpdateMethod;
-        zCheckUpdate UpdateMethod;
-        LaunchCore PrepareLaunch;
-        Packs fetchAddonPacks;
-        EmailReporter eReport;
-        AddonsLooker aLooker;
+        private zCheckUpdate QuickUpdateMethod;
+        private zCheckUpdate UpdateMethod;
+        private LaunchCore PrepareLaunch;
+        private Packs fetchAddonPacks;
+        private EmailReporter eReport;
+        private AddonsLooker aLooker;
 
         private Version aLocal = null;
         private Version aRemote = null;
 
-        Button activeButton;
-        int aux_Blinker = 0;
+        private Button activeButton;
+        private int aux_Blinker = 0;
 
         private string modsDir_previousDir = "";
 
         private bool isLaunch = false;
         private bool isDownloading = false;
+
+        private bool downloadJSRS = false;
+        private bool downloadBlastcore = false;
 
         private string GameFolder = "";
         private string AddonsFolder = "";
@@ -51,7 +54,7 @@ namespace spNLauncherArma3
         private bool isOptionalAllowed = false;
 
         private string Path_TempDownload = Path.GetTempPath() + @"spNLauncher\";
-        public List<string> modsName = new List<string>();
+        private List<string> modsName = new List<string>();
         private List<string> modsUrl = new List<string>();
         private string cfgFile = "";
         private string cfgUrl = "";
@@ -62,12 +65,12 @@ namespace spNLauncherArma3
         private int numDownloaded = 0;
 
         private long bytes_total = 0;
-        FtpWebRequest ftpRequest;
-        FtpWebResponse ftpResponse;
-        NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
+        private NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
+        private FtpWebRequest ftpRequest;
+        private FtpWebResponse ftpResponse;
 
-        Stopwatch sw = new Stopwatch();
-        string aux_downSpeed = "0.00";
+        private Stopwatch sw = new Stopwatch();
+        private string aux_downSpeed = "0.00";
 
         delegate void stringCallBack(string text);
         delegate void intCallBack(int number);
@@ -239,11 +242,51 @@ namespace spNLauncherArma3
         {
             this.Opacity = 1;
             FeedContentPanel.Focus();
+
+            if (Properties.Settings.Default.downloadQueue != "")
+            {
+                if (MessageBox.Show("You haven't finished all the downloads the last time you closed the launcher.\n\"Yes\", to continue downloads.\n\"No\", will DELETE your progress.", "spN Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    string[] aux_downloadQueue = Properties.Settings.Default.downloadQueue.Split(',');
+                    foreach (string s in aux_downloadQueue)
+                    {
+                        if (s != "")
+                            modsUrl.Add(s);
+
+                        if(s.Contains("DragonFyre"))
+                        {
+                            btn_downloadJSRS.Enabled = false;
+                            downloadJSRS = true;
+                        }
+
+                        if (s.Contains("Blastcore"))
+                        {
+                            btn_downloadBlastcore.Enabled = false;
+                            downloadBlastcore = true;
+                        }
+                    }
+
+                    downloadFile(modsUrl);
+                }
+                else
+                {
+                    try
+                    {
+                        if (Directory.Exists(Path_TempDownload))
+                            Directory.Delete(Path_TempDownload, true);
+                    }
+                    catch { }
+
+                    Properties.Settings.Default.downloadQueue = "";
+                    Properties.Settings.Default.Save();
+                }
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSettings();
+            SaveDownloadQueue();
             GC.Collect();
         }
 
@@ -476,12 +519,6 @@ namespace spNLauncherArma3
                     }
                 }
 
-                /*foreach (ToolStripMenuItem menuItem in menu_AddonPacks.DropDownItems)
-                {
-                    if (menuItem.Checked)
-                    { activePack = menuItem.Text; break; }
-                }*/
-
                 activePack = Properties.Settings.Default.lastAddonPack;
 
                 //ModSet Files
@@ -561,7 +598,7 @@ namespace spNLauncherArma3
                             }
                         }
 
-                        if (!isInstalled)
+                        if (!isInstalled && Properties.Settings.Default.downloadQueue == "")
                             modsUrl.Add(xn.Attributes["url"].Value);
                     }
                 }
@@ -623,15 +660,6 @@ namespace spNLauncherArma3
 
         private void sysbtn_close_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (Directory.Exists(Path_TempDownload))
-                    Directory.Delete(Path_TempDownload, true);
-            }
-            catch { }
-
-            SaveSettings();
-
             this.Close();
         }
 
@@ -1215,38 +1243,6 @@ namespace spNLauncherArma3
             }
         }
 
-        private void downloadQueue_DoWork(object sender, DoWorkEventArgs e)
-        {
-            int go = 0;
-            int i = 1;
-            do
-            {
-                try
-                {
-                    ftpRequest = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
-                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
-                    ftpRequest.Credentials = networkCredential;
-                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-                    go = 1;
-                }
-                catch (Exception ex)
-                {
-                    ftpRequest.Abort();
-                    progressStatusText("Download queue full. Retrying to download...");
-                    percentageStatusText("Attempts made: " + i);
-
-                    Thread.Sleep(10000);
-                    i++;
-                }
-                
-            } while (go == 0);
-        }
-
-        private void downloadQueue_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            downloadFile(modsUrl);
-        }
-
         private void txtb_armaDirectory_TextChanged(object sender, EventArgs e)
         {
             getMalloc();
@@ -1356,30 +1352,65 @@ namespace spNLauncherArma3
             }
         }
 
+        private void downloadQueue_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int go = 0;
+            int i = 1;
+            do
+            {
+                try
+                {
+                    ftpRequest = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
+                    ftpRequest.UseBinary = true;
+                    ftpRequest.UsePassive = true;
+                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
+                    ftpRequest.Credentials = networkCredential;
+
+                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+
+                    go = 1;
+                }
+                catch (Exception ex)
+                {
+                    if (ftpRequest != null)
+                        ftpRequest.Abort();
+
+                    if (ftpResponse != null)
+                        ftpResponse.Close();
+
+                    progressStatusText("Download queue full. Retrying to download...");
+                    percentageStatusText("Attempts made: " + i);
+
+                    Thread.Sleep(10000);
+                    i++;
+                }
+
+            } while (go == 0);
+        }
+
+        private void downloadQueue_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            downloadFile(modsUrl);
+        }
+
         private void downloadFile(IEnumerable<string> urls)
         {
             isDownloading = true;
             txt_progressStatus.Text = "Connecting to the host...";
 
-            try
-            {
-                if (Directory.Exists(Path_TempDownload))
-                    Directory.Delete(Path_TempDownload, true);
-            }
-            catch { }
+            if (cfgUrl != "")
+                downloadUrls.Enqueue(cfgUrl);
 
             foreach (var url in urls)
             {
                 downloadUrls.Enqueue(url);
             }
 
-            if (cfgUrl != "")
-                downloadUrls.Enqueue(cfgUrl);
+            numDownloads = downloadUrls.Count - 1;
+            numDownloaded = -1;
 
-            numDownloads = downloadUrls.Count;
-            numDownloaded = 1;
-
-            Directory.CreateDirectory(Path_TempDownload);
+            if(!Directory.Exists(Path_TempDownload))
+                Directory.CreateDirectory(Path_TempDownload);
 
             downloadFile();
         }
@@ -1389,20 +1420,27 @@ namespace spNLauncherArma3
             if (downloadUrls.Count != 0)
             {
                 sw.Start();
-                var url = downloadUrls.Dequeue();
+                var url = downloadUrls.Peek();
                 string dfileName = url.Substring(url.LastIndexOf("/") + 1,
                             (url.Length - url.LastIndexOf("/") - 1));
 
                 try
                 {
-                    Stream responseStream = ftpResponse.GetResponseStream();
+                    ftpRequest = (FtpWebRequest)WebRequest.Create(url);
+                    ftpRequest.UseBinary = true;
+                    ftpRequest.UsePassive = true;
+                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
+                    ftpRequest.Credentials = networkCredential;
+
+                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                     bytes_total = ftpResponse.ContentLength;
                     ftpResponse.Close();
-                    ftpRequest.Abort();
                 }
                 catch(Exception ex)
                 {
-                    ftpRequest.Abort();
+                    if (ftpResponse != null)
+                        ftpResponse.Close();
+
                     txt_progressStatus.Text = ex.Message;
                     btn_Launch.Enabled = true;
                     return;
@@ -1425,6 +1463,9 @@ namespace spNLauncherArma3
 
         void download_file_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            downloadUrls.Dequeue();
+            SaveDownloadQueue();
+
             sw.Reset();
 
             if (e.Error != null)
@@ -1441,6 +1482,26 @@ namespace spNLauncherArma3
             {
                 downloadFile();
             }
+        }
+
+        private void SaveDownloadQueue()
+        {
+            if (downloadUrls.Count != 0)
+            {
+                string aux_downloadQueue = "";
+                foreach (var item in downloadUrls)
+                {
+                    if (aux_downloadQueue == "")
+                        aux_downloadQueue = item + ",";
+                    else
+                        aux_downloadQueue = aux_downloadQueue + item + ",";
+                }
+                Properties.Settings.Default.downloadQueue = aux_downloadQueue;
+            }
+            else
+            { Properties.Settings.Default.downloadQueue = ""; }
+
+            Properties.Settings.Default.Save();
         }
 
         static double ConvertBytesToMegabytes(long bytes)
@@ -1714,6 +1775,12 @@ namespace spNLauncherArma3
         {
             prb_progressBar.State = ProgressBarState.Normal;
 
+            if(downloadJSRS)
+                btn_downloadJSRS.Enabled = true;
+
+            if (downloadBlastcore)
+                btn_downloadBlastcore.Enabled = true;
+
             try
             {
                 if (Directory.Exists(Path_TempDownload))
@@ -1905,6 +1972,9 @@ namespace spNLauncherArma3
                 numDownloads++;
                 downloadUrls.Enqueue(jsrsUrl);
             }
+
+            btn_downloadJSRS.Enabled = false;
+            downloadJSRS = true;
         }
 
         private void btn_downloadBlastcore_Click(object sender, EventArgs e)
@@ -1921,6 +1991,9 @@ namespace spNLauncherArma3
                 numDownloads++;
                 downloadUrls.Enqueue(blastcoreUrl);
             }
+
+            btn_downloadBlastcore.Enabled = false;
+            downloadBlastcore = true;
         }
 
         private void btn_ereaseModsDirectory_Click(object sender, EventArgs e)

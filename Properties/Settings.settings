@@ -101,5 +101,8 @@
     <Setting Name="lastAddonPack" Type="System.String" Scope="User">
       <Value Profile="(Default)">spn_lite</Value>
     </Setting>
+    <Setting Name="downloadQueue" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
