@@ -14,6 +14,7 @@ namespace spNLauncherArma3.Controls
     public partial class PackBlock : UserControl
     {
         FlowLayoutPanel packsPan;
+        Windows.PackInfo packInfo;
 
         public PackBlock(string packTitle, string packID, string packDescription, string packAddons, FlowLayoutPanel packsPanel, bool isBlastcoreAllowed, bool isJSRSAllowed, bool isOptionalAllowed)
         {
@@ -23,7 +24,8 @@ namespace spNLauncherArma3.Controls
             txt_title.Text = packTitle;
             txt_version.Text = packID;
             btn_useThis.Tag = packID;
-            txt_content.Text = packDescription + "\n\nAddons with this pack:\n" + packAddons;
+            txt_content.Text = packDescription;
+            packInfo = new Windows.PackInfo(packTitle, "Addons on this pack:\n" + packAddons);
 
             if (isBlastcoreAllowed)
                 txt_allowed.Text = txt_allowed.Text + "Blastcore | ";
@@ -80,6 +82,21 @@ namespace spNLauncherArma3.Controls
         {
             if (btn_useThis.Enabled)
                 btn_useThis.Image = Properties.Resources.useThis_inactive;
+        }
+
+        private void btn_showAddons_Click(object sender, EventArgs e)
+        {
+            packInfo.ShowDialog();
+        }
+
+        private void btn_showAddons_MouseHover(object sender, EventArgs e)
+        {
+            btn_showAddons.Image = Properties.Resources.archive_hover;
+        }
+
+        private void btn_showAddons_MouseLeave(object sender, EventArgs e)
+        {
+            btn_showAddons.Image = Properties.Resources.archive_w;
         }
     }
 }

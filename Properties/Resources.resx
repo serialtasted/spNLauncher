@@ -130,11 +130,17 @@
   <data name="bgminimize2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bgminimize2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="archive_w" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\archive_w.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="mail" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mail.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="circle-with-cross" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\circle-with-cross.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="eye" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\eye.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="bgclose4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bgclose4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -144,6 +150,9 @@
   </data>
   <data name="browse" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\browse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="check-circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\check-circle1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="bg-addon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bg-addon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -217,6 +226,9 @@
   <data name="bgclose3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bgclose3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="close_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\close_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="useThis_active" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\useThis_active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -235,8 +247,8 @@
   <data name="twitch" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\twitch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="eye" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\eye.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="bgminimize4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bgminimize4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -283,7 +295,7 @@
   <data name="bgminimize3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bgminimize3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="check-circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\check-circle1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="archive_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\archive_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

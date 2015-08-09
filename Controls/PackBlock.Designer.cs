@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackBlock));
             this.txt_title = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -35,11 +36,14 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.txt_version = new System.Windows.Forms.Label();
             this.txt_content = new System.Windows.Forms.Label();
+            this.txt_allowed = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btn_showAddons = new System.Windows.Forms.PictureBox();
             this.img_checkAllowed = new System.Windows.Forms.PictureBox();
             this.btn_useThis = new System.Windows.Forms.PictureBox();
-            this.txt_allowed = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel_bgTitle.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_showAddons)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_checkAllowed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btn_useThis)).BeginInit();
             this.SuspendLayout();
@@ -59,6 +63,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btn_showAddons);
             this.panel1.Controls.Add(this.img_checkAllowed);
             this.panel1.Controls.Add(this.btn_useThis);
             this.panel1.Controls.Add(this.panel_bgTitle);
@@ -119,12 +124,38 @@
             this.txt_content.TabIndex = 11;
             this.txt_content.Text = "%Content%\r\n";
             // 
+            // txt_allowed
+            // 
+            this.txt_allowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txt_allowed.AutoSize = true;
+            this.txt_allowed.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.txt_allowed.Location = new System.Drawing.Point(23, 141);
+            this.txt_allowed.Name = "txt_allowed";
+            this.txt_allowed.Size = new System.Drawing.Size(54, 13);
+            this.txt_allowed.TabIndex = 15;
+            this.txt_allowed.Text = "Allowed: ";
+            this.txt_allowed.Visible = false;
+            // 
+            // btn_showAddons
+            // 
+            this.btn_showAddons.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_showAddons.Image = global::spNLauncherArma3.Properties.Resources.archive_w;
+            this.btn_showAddons.Location = new System.Drawing.Point(724, 139);
+            this.btn_showAddons.Name = "btn_showAddons";
+            this.btn_showAddons.Size = new System.Drawing.Size(16, 16);
+            this.btn_showAddons.TabIndex = 16;
+            this.btn_showAddons.TabStop = false;
+            this.toolTip1.SetToolTip(this.btn_showAddons, "Addons on this pack");
+            this.btn_showAddons.Click += new System.EventHandler(this.btn_showAddons_Click);
+            this.btn_showAddons.MouseLeave += new System.EventHandler(this.btn_showAddons_MouseLeave);
+            this.btn_showAddons.MouseHover += new System.EventHandler(this.btn_showAddons_MouseHover);
+            // 
             // img_checkAllowed
             // 
             this.img_checkAllowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.img_checkAllowed.BackgroundImage = global::spNLauncherArma3.Properties.Resources.check_circle;
             this.img_checkAllowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.img_checkAllowed.Location = new System.Drawing.Point(11, 143);
+            this.img_checkAllowed.Location = new System.Drawing.Point(11, 141);
             this.img_checkAllowed.Name = "img_checkAllowed";
             this.img_checkAllowed.Size = new System.Drawing.Size(12, 13);
             this.img_checkAllowed.TabIndex = 14;
@@ -144,18 +175,6 @@
             this.btn_useThis.MouseLeave += new System.EventHandler(this.btn_useThis_MouseLeave);
             this.btn_useThis.MouseHover += new System.EventHandler(this.btn_useThis_MouseHover);
             // 
-            // txt_allowed
-            // 
-            this.txt_allowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txt_allowed.AutoSize = true;
-            this.txt_allowed.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.txt_allowed.Location = new System.Drawing.Point(23, 143);
-            this.txt_allowed.Name = "txt_allowed";
-            this.txt_allowed.Size = new System.Drawing.Size(54, 13);
-            this.txt_allowed.TabIndex = 15;
-            this.txt_allowed.Text = "Allowed: ";
-            this.txt_allowed.Visible = false;
-            // 
             // PackBlock
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -172,6 +191,7 @@
             this.panel1.PerformLayout();
             this.panel_bgTitle.ResumeLayout(false);
             this.panel_bgTitle.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_showAddons)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_checkAllowed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btn_useThis)).EndInit();
             this.ResumeLayout(false);
@@ -189,5 +209,7 @@
         private System.Windows.Forms.PictureBox btn_useThis;
         private System.Windows.Forms.PictureBox img_checkAllowed;
         private System.Windows.Forms.Label txt_allowed;
+        private System.Windows.Forms.PictureBox btn_showAddons;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
