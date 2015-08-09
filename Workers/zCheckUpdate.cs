@@ -119,8 +119,10 @@ namespace spNLauncherArma3.Workers
                 }
                 else if (NewVersion < CurVersion)
                 {
-                    //MessageBox.Show("A tua versão é superior à última versão disponível. Esta é uma situação estranha, mas pode acontecer às vezes.", "That awkward moment", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ContinueStart = true;
+                    if (MessageBox.Show("The launcher needs to downgrade to a stable version.\n • \"OK\" to downgrade.", "Version " + NewVersionS + " available", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK)
+                    { ContinueStart = false; }
+
+                    txt_versiontag.Text = "Version " + NewVersionS + " available to downgrade!";
                 }
                 else
                 {
