@@ -119,8 +119,10 @@ namespace spNLauncherArma3.Workers
                 }
                 else if (NewVersion < CurVersion)
                 {
-                    if (MessageBox.Show("The launcher needs to downgrade to a stable version.\n • \"OK\" to downgrade.", "Version " + NewVersionS + " available", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK)
+                    if (MessageBox.Show("The launcher needs to downgrade to a stable version.\n • \"OK\" to downgrade.\n • \"Cancel\" to continue.", "Version " + NewVersionS + " available", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
                     { ContinueStart = false; }
+                    else
+                    { ContinueStart = true; }
 
                     txt_versiontag.Text = "Version " + NewVersionS + " available to downgrade!";
                 }
@@ -147,7 +149,7 @@ namespace spNLauncherArma3.Workers
             {
                 try
                 {
-                    #region NewUpdateXmlInfo
+#region NewUpdateXmlInfo
                     XmlDocument NewUpdateXmlInfo = new XmlDocument();
                     NewUpdateXmlInfo.Load(urlversionxml);
 
@@ -157,7 +159,7 @@ namespace spNLauncherArma3.Workers
                     string new_versiontag = NewUpdateXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//Version").Attributes["tag"].Value;
 
                     NewVersion = new Version(new_versionmajor, new_versionminor, new_versionbuild);
-                    #endregion
+#endregion
 
                     if (NewVersion.Build != 0)
                         aux_vBuild = "." + NewVersion.Build;
@@ -177,14 +179,14 @@ namespace spNLauncherArma3.Workers
 
                 try
                 {
-                    #region CurVersionXmlInfo
+#region CurVersionXmlInfo
                     int cur_versionmajor = Assembly.GetExecutingAssembly().GetName().Version.Major;
                     int cur_versionminor = Assembly.GetExecutingAssembly().GetName().Version.Minor;
                     int cur_versionbuild = Assembly.GetExecutingAssembly().GetName().Version.Build;
                     string cur_versiontag = Properties.GlobalValues.S_VersionTag;
 
                     CurVersion = new Version(cur_versionmajor, cur_versionminor, cur_versionbuild);
-                    #endregion
+#endregion
 
                     if (CurVersion.Build != 0)
                         aux_vBuild = "." + CurVersion.Build;
