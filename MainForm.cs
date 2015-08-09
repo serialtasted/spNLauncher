@@ -1224,10 +1224,9 @@ namespace spNLauncherArma3
                 try
                 {
                     ftpRequest = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
+                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
                     ftpRequest.Credentials = networkCredential;
                     ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-                    ftpResponse.Close();
-                    ftpRequest.Abort();
                     go = 1;
                 }
                 catch (Exception ex)
@@ -1396,11 +1395,6 @@ namespace spNLauncherArma3
 
                 try
                 {
-                    ftpRequest = (FtpWebRequest)WebRequest.Create(url);
-                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
-                    ftpRequest.Credentials = networkCredential;
-                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-
                     Stream responseStream = ftpResponse.GetResponseStream();
                     bytes_total = ftpResponse.ContentLength;
                     ftpResponse.Close();

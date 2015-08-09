@@ -360,7 +360,7 @@
             this.chb_blastcore,
             this.btn_downloadBlastcore});
             this.menu_blastcore.Name = "menu_blastcore";
-            this.menu_blastcore.Size = new System.Drawing.Size(153, 70);
+            this.menu_blastcore.Size = new System.Drawing.Size(153, 48);
             // 
             // chb_blastcore
             // 
