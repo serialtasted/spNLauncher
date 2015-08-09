@@ -1227,11 +1227,12 @@ namespace spNLauncherArma3
                     ftpRequest.Credentials = networkCredential;
                     ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                     ftpResponse.Close();
+                    ftpRequest.Abort();
                     go = 1;
                 }
                 catch (Exception ex)
                 {
-                    ftpResponse.Close();
+                    ftpRequest.Abort();
                     progressStatusText("Download queue full. Retrying to download...");
                     percentageStatusText("Attempts made: " + i);
                     go = 0;
@@ -1403,10 +1404,11 @@ namespace spNLauncherArma3
                     Stream responseStream = ftpResponse.GetResponseStream();
                     bytes_total = ftpResponse.ContentLength;
                     ftpResponse.Close();
+                    ftpRequest.Abort();
                 }
                 catch(Exception ex)
                 {
-                    ftpResponse.Close();
+                    ftpRequest.Abort();
                     txt_progressStatus.Text = ex.Message;
                     btn_Launch.Enabled = true;
                     return;
@@ -1901,8 +1903,8 @@ namespace spNLauncherArma3
             {
                 modsUrl.Clear();
                 modsUrl.Add(jsrsUrl);
-                downloadFile(modsUrl);
                 btn_Launch.Enabled = false;
+                downloadQueue.RunWorkerAsync();
             }
             else
             {
@@ -1917,8 +1919,8 @@ namespace spNLauncherArma3
             {
                 modsUrl.Clear();
                 modsUrl.Add(blastcoreUrl);
-                downloadFile(modsUrl);
                 btn_Launch.Enabled = false;
+                downloadQueue.RunWorkerAsync();
             }
             else
             {
