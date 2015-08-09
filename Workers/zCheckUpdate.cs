@@ -203,7 +203,7 @@ namespace spNLauncherArma3.Workers
                 if (NewVersion > CurVersion)
                 { btn_Update.Enabled = true; }
                 else if (NewVersion < CurVersion)
-                { btn_Update.Enabled = false; }
+                { btn_Update.Enabled = true; btn_Update.Text = "Downgrade"; }
                 else if (NewVersion == CurVersion)
                 { btn_Update.Enabled = true; btn_Update.Text = "Reinstall"; }
             }
