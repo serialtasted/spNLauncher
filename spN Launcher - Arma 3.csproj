@@ -193,6 +193,12 @@
     <Compile Include="Windows\LegacyTransporter.Designer.cs">
       <DependentUpon>LegacyTransporter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\PackInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\PackInfo.Designer.cs">
+      <DependentUpon>PackInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Splash.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -241,6 +247,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\LegacyTransporter.resx">
       <DependentUpon>LegacyTransporter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\PackInfo.resx">
+      <DependentUpon>PackInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\Splash.resx">
       <DependentUpon>Splash.cs</DependentUpon>
@@ -368,6 +377,7 @@
     <None Include="Resources\check-circle.png" />
     <None Include="Resources\times-circle-o.png" />
     <None Include="Resources\check-circle1.png" />
+    <None Include="Resources\archive_hover.png" />
     <Content Include="spn_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
