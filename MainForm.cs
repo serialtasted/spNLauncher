@@ -530,12 +530,12 @@ namespace spNLauncherArma3
                 isJSRSAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["jsrs"].Value);
                 isOptionalAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["optional"].Value);
 
-                if (isBlastcoreAllowed && chb_blastcore.Tag?.ToString() != "")
+                if (isBlastcoreAllowed)
                 { chb_blastcore.Enabled = true; }
                 else
                 { chb_blastcore.Enabled = false; chb_blastcore.Checked = false; }
 
-                if (isJSRSAllowed && chb_blastcore.Tag?.ToString() != "")
+                if (isJSRSAllowed)
                 { chb_jsrs.Enabled = true; }
                 else
                 { chb_jsrs.Enabled = false; chb_jsrs.Checked = false; }
