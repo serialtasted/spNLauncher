@@ -17,7 +17,7 @@ This launcher is used by the spN Team. The launcher enables us to launch a bunch
 * The user can select some optional addons
 * Addons directory is not the same as the game
 * All addons have a version controller that enables the launcher to update only the addon that needs to be updated
-* Automatic download queueing if theres no available FTP connection
+* Automatic download queueing if theres no available FTP connection.
 
 ###Contributing
 You can help out with the development of this launcher by reporting bugs or suggesting some new features. Or you can even contribute by forking this repository and submitting a pull request that will be later reviwed.
