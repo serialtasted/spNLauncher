@@ -495,17 +495,11 @@ namespace spNLauncherArma3
                 XmlNodeList xnl;
 
                 //Common Files
-                xmlNodes = "//spN_Launcher//ModSetInfo//Common//mod";
+                xmlNodes = "//spN_Launcher//ModSetInfo//Recommended//mod";
                 xnl = RemoteXmlInfo.SelectNodes(xmlNodes);
 
                 foreach (XmlNode xn in xnl)
                 {
-                    if (xn.Attributes["type"].Value == "cfg")
-                    {
-                        cfgFile = xn.Attributes["name"].Value;
-                        cfgUrl = xn.Attributes["url"].Value;
-                    }
-
                     if (xn.Attributes["type"].Value == "blastcore")
                     {
                         blastcoreUrl = xn.Attributes["url"].Value;
@@ -529,6 +523,9 @@ namespace spNLauncherArma3
                 isBlastcoreAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["blastcore"].Value);
                 isJSRSAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["jsrs"].Value);
                 isOptionalAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["optional"].Value);
+
+                cfgFile = activePack; ;
+                cfgUrl = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["cfgfile"].Value; ;
 
                 if (isBlastcoreAllowed)
                 { chb_blastcore.Enabled = true; }
