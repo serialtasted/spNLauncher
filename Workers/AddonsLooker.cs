@@ -43,11 +43,15 @@ namespace spNLauncherArma3.Workers
                 }
                 else
                 {
+                    bool aux_jsrsState = chb_jsrs.Checked;
+                    bool aux_blastcoreState = chb_blastcore.Checked;
+
                     foreach (DirectoryInfo dir in addonDir.GetDirectories())
                     {
                         if ((dir.Name.ToLower().Contains("jsrs") || dir.Name.ToLower().Contains("dragonfyre")) && isJSRSAllowed)
                         {
                             chb_jsrs.Enabled = true;
+                            chb_jsrs.Checked = aux_jsrsState;
                             chb_jsrs.Tag = Path.GetFileName(dir.Name);
                             break;
                         }
@@ -59,6 +63,7 @@ namespace spNLauncherArma3.Workers
                         if (dir.Name.ToLower().Contains("blastcore") && isBlastcoreAllowed)
                         {
                             chb_blastcore.Enabled = true;
+                            chb_blastcore.Checked = aux_blastcoreState;
                             chb_blastcore.Tag = Path.GetFileName(dir.Name);
                             break;
                         }

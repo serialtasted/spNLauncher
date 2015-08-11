@@ -2086,6 +2086,7 @@ namespace spNLauncherArma3
         private void btn_reloadRemoteSettings_Click(object sender, EventArgs e)
         {
             FetchRemoteSettings();
+            GetAddons();
         }
 
         private void btn_showRemoteSettings_Click(object sender, EventArgs e)
