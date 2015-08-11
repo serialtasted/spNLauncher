@@ -1387,15 +1387,18 @@ namespace spNLauncherArma3
 
         private void downloadQueue_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            downloadFile(modsUrl);
+            if(modsUrl[0] != cfgUrl)
+                downloadFile(modsUrl, false);
+            else
+                downloadFile(modsUrl, true);
         }
 
-        private void downloadFile(IEnumerable<string> urls)
+        private void downloadFile(IEnumerable<string> urls, bool isUrlConfig)
         {
             isDownloading = true;
             txt_progressStatus.Text = "Connecting to the host...";
 
-            if (cfgUrl != "")
+            if (cfgUrl != "" && !isUrlConfig)
                 downloadUrls.Enqueue(cfgUrl);
 
             foreach (var url in urls)
@@ -1542,7 +1545,7 @@ namespace spNLauncherArma3
             btn_ereaseModsDirectory.Enabled = false;
             btn_browseModsDirectory.Enabled = false;
 
-            backgroundWorker.RunWorkerAsync();
+            backgroundInstaller.RunWorkerAsync();
         }
 
         void ztundread()
@@ -1559,13 +1562,14 @@ namespace spNLauncherArma3
             }
         }
 
-        private async void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private async void backgroundInstaller_DoWork(object sender, DoWorkEventArgs e)
         {
             Thread.Sleep(10);
 
             bool isTFR = false;
             bool isRHS_AFRF = false;
             bool isRHS_USF = false;
+
             bool allFine = true;
             string aux_ModsFolder = AddonsFolder;
 
@@ -1604,7 +1608,7 @@ namespace spNLauncherArma3
                                     filePath = Path.Combine(aux_ModsFolder, entry.FullName).Replace(@"/", @"\\").Replace(@"\\", @"\");
 
                                     string[] aux_topFolder = entry.FullName.Split('/');
-                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])))
+                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])) && filePath.EndsWith(@"\"))
                                         Directory.CreateDirectory(Path.Combine(aux_ModsFolder, aux_topFolder[0]));
 
                                     if (!entry.FullName.Contains(@"\."))
@@ -1768,7 +1772,7 @@ namespace spNLauncherArma3
             Thread.Sleep(1500);
         }
 
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void backgroundInstaller_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             prb_progressBar.State = ProgressBarState.Normal;
 
@@ -2157,6 +2161,19 @@ namespace spNLauncherArma3
             {
                 MessageBox.Show("No such directory \"" + AddonsFolder + @"@task_force_radio\plugins" + "\".", "No such file or directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btn_downloadConfigs_Click(object sender, EventArgs e)
+        {
+            if (!isDownloading)
+            {
+                modsUrl.Clear();
+                modsUrl.Add(cfgUrl);
+                btn_Launch.Enabled = false;
+                downloadQueue.RunWorkerAsync();
+            }
+
+            btn_downloadConfigs.Enabled = false;
         }
     }
 }
