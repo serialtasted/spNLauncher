@@ -1592,7 +1592,7 @@ namespace spNLauncherArma3
                             string filePath = "";
                             int i = 0;
 
-                            if (zipFile.Contains("mission_files"))
+                            if (zipFile.Contains(activePack))
                                 aux_ModsFolder = GameFolder;
                             else
                                 aux_ModsFolder = AddonsFolder;
