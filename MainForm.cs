@@ -533,12 +533,12 @@ namespace spNLauncherArma3
                 if (isBlastcoreAllowed)
                 { chb_blastcore.Enabled = true; }
                 else
-                { chb_blastcore.Enabled = false; chb_blastcore.Checked = false; }
+                { chb_blastcore.Enabled = false; }
 
                 if (isJSRSAllowed)
                 { chb_jsrs.Enabled = true; }
                 else
-                { chb_jsrs.Enabled = false; chb_jsrs.Checked = false; }
+                { chb_jsrs.Enabled = false; }
 
                 if (isOptionalAllowed)
                 { panel_Optional.Enabled = true; }
