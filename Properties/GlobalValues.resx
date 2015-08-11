@@ -123,6 +123,12 @@
   <data name="FP_RulesUrl" xml:space="preserve">
     <value>https://dl.dropbox.com/u/3609589/spNLauncher/Xml/rules.xml</value>
   </data>
+  <data name="FTP_Password" xml:space="preserve">
+    <value>spnlauncher</value>
+  </data>
+  <data name="FTP_Username" xml:space="preserve">
+    <value>spnlauncher</value>
+  </data>
   <data name="S_UpdateUrl" xml:space="preserve">
     <value>https://dl.dropbox.com/u/3609589/spNLauncher/Releases/zUpdator.exe</value>
   </data>

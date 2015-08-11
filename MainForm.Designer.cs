@@ -164,7 +164,7 @@
             this.WindowTitle = new System.Windows.Forms.Label();
             this.WindowVersionStatus = new System.Windows.Forms.Label();
             this.dlg_folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.backgroundInstaller = new System.ComponentModel.BackgroundWorker();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundBlinker = new System.ComponentModel.BackgroundWorker();
             this.delayLaunch = new System.Windows.Forms.Timer(this.components);
@@ -176,8 +176,9 @@
             this.btn_reloadRemoteSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_showRemoteSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_reinstallTFRPlugins = new System.Windows.Forms.ToolStripMenuItem();
-            this.menu_AddonPacks = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_downloadConfigs = new System.Windows.Forms.ToolStripMenuItem();
             this.button1 = new System.Windows.Forms.Button();
+            this.downloadQueue = new System.ComponentModel.BackgroundWorker();
             this.splitButton1 = new spNLauncherArma3.Controls.SplitButton();
             this.btn_jsrs = new spNLauncherArma3.Controls.SplitButton();
             this.prb_progressBar = new spNLauncherArma3.Controls.Windows7ProgressBar();
@@ -1026,7 +1027,7 @@
             this.FeedContentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FeedContentPanel.Location = new System.Drawing.Point(10, 15);
             this.FeedContentPanel.Name = "FeedContentPanel";
-            this.FeedContentPanel.Padding = new System.Windows.Forms.Padding(0, 5, 5, 5);
+            this.FeedContentPanel.Padding = new System.Windows.Forms.Padding(0, 5, 5, 200);
             this.FeedContentPanel.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.FeedContentPanel.Size = new System.Drawing.Size(886, 286);
             this.FeedContentPanel.TabIndex = 100;
@@ -1523,7 +1524,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.label10.Location = new System.Drawing.Point(769, 13);
+            this.label10.Location = new System.Drawing.Point(790, 13);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(17, 19);
             this.label10.TabIndex = 9;
@@ -1535,7 +1536,7 @@
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.label9.Location = new System.Drawing.Point(661, 13);
+            this.label9.Location = new System.Drawing.Point(698, 13);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(17, 19);
             this.label9.TabIndex = 8;
@@ -1547,7 +1548,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.label8.Location = new System.Drawing.Point(107, 13);
+            this.label8.Location = new System.Drawing.Point(176, 13);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(17, 19);
             this.label8.TabIndex = 7;
@@ -1559,7 +1560,7 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.label7.Location = new System.Drawing.Point(297, 13);
+            this.label7.Location = new System.Drawing.Point(350, 13);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(17, 19);
             this.label7.TabIndex = 6;
@@ -1571,7 +1572,7 @@
             this.menu_community.AutoSize = true;
             this.menu_community.Font = new System.Drawing.Font("Segoe UI", 20F);
             this.menu_community.ForeColor = System.Drawing.Color.Gray;
-            this.menu_community.Location = new System.Drawing.Point(133, 3);
+            this.menu_community.Location = new System.Drawing.Point(194, 3);
             this.menu_community.Name = "menu_community";
             this.menu_community.Size = new System.Drawing.Size(155, 37);
             this.menu_community.TabIndex = 5;
@@ -1587,7 +1588,7 @@
             this.menu_about.AutoSize = true;
             this.menu_about.Font = new System.Drawing.Font("Segoe UI", 20F);
             this.menu_about.ForeColor = System.Drawing.Color.Gray;
-            this.menu_about.Location = new System.Drawing.Point(795, 3);
+            this.menu_about.Location = new System.Drawing.Point(808, 3);
             this.menu_about.Name = "menu_about";
             this.menu_about.Size = new System.Drawing.Size(90, 37);
             this.menu_about.TabIndex = 4;
@@ -1602,7 +1603,7 @@
             this.menu_help.AutoSize = true;
             this.menu_help.Font = new System.Drawing.Font("Segoe UI", 20F);
             this.menu_help.ForeColor = System.Drawing.Color.Gray;
-            this.menu_help.Location = new System.Drawing.Point(687, 3);
+            this.menu_help.Location = new System.Drawing.Point(716, 3);
             this.menu_help.Name = "menu_help";
             this.menu_help.Size = new System.Drawing.Size(73, 37);
             this.menu_help.TabIndex = 3;
@@ -1617,11 +1618,11 @@
             this.menu_news.AutoSize = true;
             this.menu_news.Font = new System.Drawing.Font("Segoe UI", 20F);
             this.menu_news.ForeColor = System.Drawing.Color.Brown;
-            this.menu_news.Location = new System.Drawing.Point(16, 3);
+            this.menu_news.Location = new System.Drawing.Point(7, 3);
             this.menu_news.Name = "menu_news";
-            this.menu_news.Size = new System.Drawing.Size(82, 37);
+            this.menu_news.Size = new System.Drawing.Size(168, 37);
             this.menu_news.TabIndex = 2;
-            this.menu_news.Text = "News";
+            this.menu_news.Text = "Addon Packs";
             this.menu_news.UseMnemonic = false;
             this.menu_news.Click += new System.EventHandler(this.menu_news_Click);
             this.menu_news.MouseEnter += new System.EventHandler(this.menu_news_MouseEnter);
@@ -1632,7 +1633,7 @@
             this.menu_launchOptions.AutoSize = true;
             this.menu_launchOptions.Font = new System.Drawing.Font("Segoe UI", 20F);
             this.menu_launchOptions.ForeColor = System.Drawing.Color.Gray;
-            this.menu_launchOptions.Location = new System.Drawing.Point(323, 3);
+            this.menu_launchOptions.Location = new System.Drawing.Point(368, 3);
             this.menu_launchOptions.Name = "menu_launchOptions";
             this.menu_launchOptions.Size = new System.Drawing.Size(329, 37);
             this.menu_launchOptions.TabIndex = 1;
@@ -1912,10 +1913,10 @@
             this.dlg_folderBrowser.RootFolder = System.Environment.SpecialFolder.MyComputer;
             this.dlg_folderBrowser.ShowNewFolderButton = false;
             // 
-            // backgroundWorker
+            // backgroundInstaller
             // 
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
-            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            this.backgroundInstaller.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundInstaller_DoWork);
+            this.backgroundInstaller.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundInstaller_RunWorkerCompleted);
             // 
             // backgroundBlinker
             // 
@@ -1956,9 +1957,9 @@
             this.menu_moreOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menu_RemoteSettings,
             this.btn_reinstallTFRPlugins,
-            this.menu_AddonPacks});
+            this.btn_downloadConfigs});
             this.menu_moreOptions.Name = "menu_moreOptions";
-            this.menu_moreOptions.Size = new System.Drawing.Size(184, 92);
+            this.menu_moreOptions.Size = new System.Drawing.Size(209, 92);
             // 
             // menu_RemoteSettings
             // 
@@ -1994,12 +1995,13 @@
             this.btn_reinstallTFRPlugins.Text = "Reinstall TFR plugins";
             this.btn_reinstallTFRPlugins.Click += new System.EventHandler(this.btn_reinstallTFRPlugins_Click);
             // 
-            // menu_AddonPacks
+            // btn_downloadConfigs
             // 
-            this.menu_AddonPacks.Image = global::spNLauncherArma3.Properties.Resources.archive;
-            this.menu_AddonPacks.Name = "menu_AddonPacks";
-            this.menu_AddonPacks.Size = new System.Drawing.Size(183, 22);
-            this.menu_AddonPacks.Text = "Addon Packs";
+            this.btn_downloadConfigs.Image = global::spNLauncherArma3.Properties.Resources.download3;
+            this.btn_downloadConfigs.Name = "btn_downloadConfigs";
+            this.btn_downloadConfigs.Size = new System.Drawing.Size(208, 22);
+            this.btn_downloadConfigs.Text = "Download Active Configs";
+            this.btn_downloadConfigs.Click += new System.EventHandler(this.btn_downloadConfigs_Click);
             // 
             // button1
             // 
@@ -2009,6 +2011,11 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
+            // 
+            // downloadQueue
+            // 
+            this.downloadQueue.DoWork += new System.ComponentModel.DoWorkEventHandler(this.downloadQueue_DoWork);
+            this.downloadQueue.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.downloadQueue_RunWorkerCompleted);
             // 
             // splitButton1
             // 
@@ -2237,7 +2244,7 @@
         private System.Windows.Forms.Button btn_ereaseTSDirectory;
         private System.Windows.Forms.Button btn_ereaseArmaDirectory;
         private System.Windows.Forms.Label txt_percentageStatus;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.ComponentModel.BackgroundWorker backgroundInstaller;
         private System.Windows.Forms.PictureBox btn_copyLaunchOptions;
         private System.Windows.Forms.ToolTip toolTip;
         private System.ComponentModel.BackgroundWorker backgroundBlinker;
@@ -2283,7 +2290,6 @@
         private System.Windows.Forms.ContextMenuStrip menu_moreOptions;
         private System.Windows.Forms.ToolStripMenuItem menu_RemoteSettings;
         private System.Windows.Forms.ToolStripMenuItem btn_reinstallTFRPlugins;
-        private System.Windows.Forms.ToolStripMenuItem menu_AddonPacks;
         private System.Windows.Forms.ToolStripMenuItem btn_reloadRemoteSettings;
         private System.Windows.Forms.ToolStripMenuItem btn_showRemoteSettings;
         private System.Windows.Forms.Panel panel_Optional;
@@ -2295,5 +2301,7 @@
         private System.Windows.Forms.ListBox lstb_activeAddons;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.ComponentModel.BackgroundWorker downloadQueue;
+        private System.Windows.Forms.ToolStripMenuItem btn_downloadConfigs;
     }
 }

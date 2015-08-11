@@ -20,22 +20,27 @@ namespace spNLauncherArma3
 {
     public partial class MainForm : Form
     {
-        Feed FeedMethod;
-        zCheckUpdate QuickUpdateMethod;
-        zCheckUpdate UpdateMethod;
-        LaunchCore PrepareLaunch;
-        FecthAddonPacks fetchAddonPacks;
-        EmailReporter eReport;
+        //Feed FeedMethod;
+        private zCheckUpdate QuickUpdateMethod;
+        private zCheckUpdate UpdateMethod;
+        private LaunchCore PrepareLaunch;
+        private Packs fetchAddonPacks;
+        private EmailReporter eReport;
+        private AddonsLooker aLooker;
 
         private Version aLocal = null;
         private Version aRemote = null;
 
-        Button activeButton;
-        int aux_Blinker = 0;
+        private Button activeButton;
+        private int aux_Blinker = 0;
 
         private string modsDir_previousDir = "";
 
         private bool isLaunch = false;
+        private bool isDownloading = false;
+
+        private bool downloadJSRS = false;
+        private bool downloadBlastcore = false;
 
         private string GameFolder = "";
         private string AddonsFolder = "";
@@ -59,8 +64,13 @@ namespace spNLauncherArma3
         private int numDownloads = 0;
         private int numDownloaded = 0;
 
-        Stopwatch sw = new Stopwatch();
-        string aux_downSpeed = "0.00";
+        private long bytes_total = 0;
+        private NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
+        private FtpWebRequest ftpRequest;
+        private FtpWebResponse ftpResponse;
+
+        private Stopwatch sw = new Stopwatch();
+        private string aux_downSpeed = "0.00";
 
         delegate void stringCallBack(string text);
         delegate void intCallBack(int number);
@@ -133,8 +143,9 @@ namespace spNLauncherArma3
 
             QuickUpdateMethod = new zCheckUpdate(WindowVersionStatus);
             UpdateMethod = new zCheckUpdate(btn_update, txt_curversion, txt_latestversion, busy);
-            fetchAddonPacks = new FecthAddonPacks(menu_AddonPacks, this);
+            fetchAddonPacks = new Packs (FeedContentPanel);
             eReport = new EmailReporter();
+            aLooker = new AddonsLooker(lstb_detectedAddons, lstb_activeAddons, chb_jsrs, chb_blastcore);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -145,8 +156,8 @@ namespace spNLauncherArma3
             this.Location = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2,
                           (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2);
 
-            FeedMethod = new Feed(FeedContentPanel, Properties.GlobalValues.FP_FeedUrl);
-            FeedMethod.GetRSSNews();
+            //FeedMethod = new Feed(FeedContentPanel, Properties.GlobalValues.FP_FeedUrl);
+            //FeedMethod.GetRSSNews();
             //delayFecthNews.Start();
 
             if (Properties.Settings.Default.UpdateSettings)
@@ -213,7 +224,9 @@ namespace spNLauncherArma3
 
             FetchRemoteSettings();
 
-            getAddons(); getMalloc();
+            GetAddons();
+
+            getMalloc();
 
             UpdateMethod.CheckUpdates();
 
@@ -229,12 +242,57 @@ namespace spNLauncherArma3
         {
             this.Opacity = 1;
             FeedContentPanel.Focus();
+
+            if (Properties.Settings.Default.downloadQueue != "" && panelMenu.Visible == true)
+            {
+                if (MessageBox.Show("You haven't finished all the downloads the last time you closed the launcher.\n\"Yes\", to continue downloads.\n\"No\", will DELETE your progress.", "spN Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    string[] aux_downloadQueue = Properties.Settings.Default.downloadQueue.Split(',');
+                    foreach (string s in aux_downloadQueue)
+                    {
+                        if (s != "")
+                            modsUrl.Add(s);
+
+                        if(s.Contains("DragonFyre"))
+                        {
+                            btn_downloadJSRS.Enabled = false;
+                            downloadJSRS = true;
+                        }
+
+                        if (s.Contains("Blastcore"))
+                        {
+                            btn_downloadBlastcore.Enabled = false;
+                            downloadBlastcore = true;
+                        }
+                    }
+
+                    downloadQueue.RunWorkerAsync();
+                }
+                else
+                {
+                    try
+                    {
+                        if (Directory.Exists(Path_TempDownload))
+                            Directory.Delete(Path_TempDownload, true);
+                    }
+                    catch { }
+
+                    Properties.Settings.Default.downloadQueue = "";
+                    Properties.Settings.Default.Save();
+                }
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSettings();
+            SaveDownloadQueue();
             GC.Collect();
+        }
+
+        public void GetAddons()
+        {
+            aLooker.getAddons(isJSRSAllowed, isBlastcoreAllowed, modsName);
         }
 
         void GetDirectories()
@@ -437,17 +495,11 @@ namespace spNLauncherArma3
                 XmlNodeList xnl;
 
                 //Common Files
-                xmlNodes = "//spN_Launcher//ModSetInfo//Common//mod";
+                xmlNodes = "//spN_Launcher//ModSetInfo//Recommended//mod";
                 xnl = RemoteXmlInfo.SelectNodes(xmlNodes);
 
                 foreach (XmlNode xn in xnl)
                 {
-                    if (xn.Attributes["type"].Value == "cfg")
-                    {
-                        cfgFile = xn.Attributes["name"].Value;
-                        cfgUrl = xn.Attributes["url"].Value;
-                    }
-
                     if (xn.Attributes["type"].Value == "blastcore")
                     {
                         blastcoreUrl = xn.Attributes["url"].Value;
@@ -461,11 +513,7 @@ namespace spNLauncherArma3
                     }
                 }
 
-                foreach (ToolStripMenuItem menuItem in menu_AddonPacks.DropDownItems)
-                {
-                    if (menuItem.Checked)
-                    { activePack = menuItem.Text; break; }
-                }
+                activePack = Properties.Settings.Default.lastAddonPack;
 
                 //ModSet Files
                 serverIp = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["ip"].Value;
@@ -476,15 +524,18 @@ namespace spNLauncherArma3
                 isJSRSAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["jsrs"].Value);
                 isOptionalAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["optional"].Value);
 
-                if (isBlastcoreAllowed && chb_blastcore.Tag?.ToString() != "")
+                cfgFile = activePack; ;
+                cfgUrl = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["cfgfile"].Value; ;
+
+                if (isBlastcoreAllowed)
                 { chb_blastcore.Enabled = true; }
                 else
-                { chb_blastcore.Enabled = false; chb_blastcore.Checked = false; }
+                { chb_blastcore.Enabled = false; }
 
-                if (isJSRSAllowed && chb_blastcore.Tag?.ToString() != "")
+                if (isJSRSAllowed)
                 { chb_jsrs.Enabled = true; }
                 else
-                { chb_jsrs.Enabled = false; chb_jsrs.Checked = false; }
+                { chb_jsrs.Enabled = false; }
 
                 if (isOptionalAllowed)
                 { panel_Optional.Enabled = true; }
@@ -544,7 +595,7 @@ namespace spNLauncherArma3
                             }
                         }
 
-                        if (!isInstalled)
+                        if (!isInstalled && Properties.Settings.Default.downloadQueue == "")
                             modsUrl.Add(xn.Attributes["url"].Value);
                     }
                 }
@@ -554,108 +605,6 @@ namespace spNLauncherArma3
                 MessageBox.Show(ex.Message, "Unable to fetch remote settings", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 progressStatusText("Unable to fetch remote settings.");
             }
-        }
-
-        public void getAddons()
-        {
-            //Properties.Settings.Default.cModsFolder_value = ModsFolder = Properties.Settings.Default.Arma3Folder;
-
-            AddonsFolder = Properties.Settings.Default.AddonsFolder;
-
-            try
-            {
-                lstb_detectedAddons.Items.Clear();
-
-                DirectoryInfo addonDir = new DirectoryInfo(AddonsFolder);
-                DirectoryInfo[] subDirs = addonDir.GetDirectories();
-
-                if (subDirs.Length == 0)
-                {
-                    chb_jsrs.Tag = ""; chb_jsrs.Enabled = false; chb_jsrs.Checked = false;
-                    chb_blastcore.Tag = ""; chb_blastcore.Enabled = false; chb_blastcore.Checked = false;
-                }
-                else
-                {
-                    foreach (DirectoryInfo dir in addonDir.GetDirectories())
-                    {
-                        if ((dir.Name.ToLower().Contains("jsrs") || dir.Name.ToLower().Contains("dragonfyre")) && isJSRSAllowed)
-                        {
-                            chb_jsrs.Enabled = true;
-                            chb_jsrs.Tag = Path.GetFileName(dir.Name);
-                            break;
-                        }
-                        else { chb_jsrs.Tag = ""; chb_jsrs.Enabled = false; chb_jsrs.Checked = false; }
-                    }
-
-                    foreach (DirectoryInfo dir in addonDir.GetDirectories())
-                    {
-                        if (dir.Name.ToLower().Contains("blastcore") && isBlastcoreAllowed)
-                        {
-                            chb_blastcore.Enabled = true;
-                            chb_blastcore.Tag = Path.GetFileName(dir.Name);
-                            break;
-                        }
-                        else { chb_blastcore.Tag = ""; chb_blastcore.Enabled = false; chb_blastcore.Checked = false; }
-                    }
-
-                    foreach (DirectoryInfo dir in addonDir.GetDirectories())
-                    {
-                        bool aux_isInstalled = false;
-                        bool aux_isListed = false;
-
-                        if (dir.Name.StartsWith("@"))
-                        {
-                            foreach (string m in modsName)
-                            {
-                                if (dir.Name == m || dir.Name.ToLower().Contains("blastcore") || dir.Name.ToLower().Contains("jsrs") || dir.Name.ToLower().Contains("dragonfyre")) { aux_isInstalled = true; break; }
-                                else { continue; }
-                            }
-
-                            if (!aux_isInstalled)
-                            {
-                                foreach (string m in lstb_activeAddons.Items)
-                                {
-                                    if (dir.Name == m) { aux_isListed = true; break; }
-                                    else { continue; }
-                                }
-
-                                if (!aux_isListed)
-                                    lstb_detectedAddons.Items.Add(dir.Name);
-                            }
-                        }
-                        else { continue; }
-                    }
-
-                    foreach (string f in lstb_activeAddons.Items)
-                    {
-                        foreach (string m in modsName)
-                        {
-                            if (f == m)
-                            {
-                                lstb_activeAddons.Items.Remove(f);
-                                break;
-                            }
-                        }
-
-                        bool aux_isInstalled = false;
-
-                        foreach (string d in Directory.GetDirectories(AddonsFolder))
-                        {
-                            if (d.Contains(f))
-                            {
-                                aux_isInstalled = true;
-                                break;
-                            }
-                            else { continue; }
-                        }
-
-                        if (!aux_isInstalled)
-                            lstb_activeAddons.Items.Remove(f);
-                    }
-                }
-            }
-            catch
-            { }
         }
 
         void getMalloc()
@@ -708,15 +657,6 @@ namespace spNLauncherArma3
 
         private void sysbtn_close_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (Directory.Exists(Path_TempDownload))
-                    Directory.Delete(Path_TempDownload, true);
-            }
-            catch { }
-
-            SaveSettings();
-
             this.Close();
         }
 
@@ -1210,7 +1150,7 @@ namespace spNLauncherArma3
         private void btn_Launch_Click(object sender, EventArgs e)
         {
             FetchRemoteSettings();
-            getAddons();
+            GetAddons();
             isLaunch = true;
 
             Process[] pname = Process.GetProcessesByName("steam");
@@ -1296,7 +1236,7 @@ namespace spNLauncherArma3
                 if (PrepareLaunch.isModPackInstalled(modsName, modsUrl))
                     PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
                 else
-                    downloadFile(modsUrl);
+                    downloadQueue.RunWorkerAsync();
             }
         }
 
@@ -1331,6 +1271,19 @@ namespace spNLauncherArma3
             else
             {
                 this.txt_progressStatus.Text = text;
+            }
+        }
+
+        private void percentageStatusText(string text)
+        {
+            if (this.txt_progressStatus.InvokeRequired)
+            {
+                stringCallBack d = new stringCallBack(percentageStatusText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.txt_percentageStatus.Text = text;
             }
         }
 
@@ -1396,29 +1349,69 @@ namespace spNLauncherArma3
             }
         }
 
-        private void downloadFile(IEnumerable<string> urls)
+        private void downloadQueue_DoWork(object sender, DoWorkEventArgs e)
         {
+            int go = 0;
+            int i = 1;
+            do
+            {
+                try
+                {
+                    ftpRequest = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
+                    ftpRequest.UseBinary = true;
+                    ftpRequest.UsePassive = true;
+                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
+                    ftpRequest.Credentials = networkCredential;
+
+                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+
+                    go = 1;
+                }
+                catch (Exception ex)
+                {
+                    if (ftpRequest != null)
+                        ftpRequest.Abort();
+
+                    if (ftpResponse != null)
+                        ftpResponse.Close();
+
+                    progressStatusText("Download queue full. Retrying to download...");
+                    percentageStatusText("Attempts made: " + i);
+
+                    Thread.Sleep(10000);
+                    i++;
+                }
+
+            } while (go == 0);
+        }
+
+        private void downloadQueue_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if(modsUrl[0] != cfgUrl)
+                downloadFile(modsUrl, false);
+            else
+                downloadFile(modsUrl, true);
+        }
+
+        private void downloadFile(IEnumerable<string> urls, bool isUrlConfig)
+        {
+            isDownloading = true;
             txt_progressStatus.Text = "Connecting to the host...";
 
-            try
-            {
-                if (Directory.Exists(Path_TempDownload))
-                    Directory.Delete(Path_TempDownload, true);
-            }
-            catch { }
+            if (cfgUrl != "" && !isUrlConfig)
+                downloadUrls.Enqueue(cfgUrl);
 
             foreach (var url in urls)
             {
                 downloadUrls.Enqueue(url);
             }
 
-            if (cfgUrl != "")
-                downloadUrls.Enqueue(cfgUrl);
+            numDownloads = downloadUrls.Count - 1;
+            numDownloaded = -1;
 
-            numDownloads = downloadUrls.Count;
-            numDownloaded = 1;
+            if(!Directory.Exists(Path_TempDownload))
+                Directory.CreateDirectory(Path_TempDownload);
 
-            Directory.CreateDirectory(Path_TempDownload);
             downloadFile();
         }
 
@@ -1427,13 +1420,36 @@ namespace spNLauncherArma3
             if (downloadUrls.Count != 0)
             {
                 sw.Start();
-                WebClient client = new WebClient();
-                client.DownloadProgressChanged += download_file_DownloadProgressChanged;
-                client.DownloadFileCompleted += download_file_DownloadFileCompleted;
-
-                var url = downloadUrls.Dequeue();
+                var url = downloadUrls.Peek();
                 string dfileName = url.Substring(url.LastIndexOf("/") + 1,
                             (url.Length - url.LastIndexOf("/") - 1));
+
+                try
+                {
+                    ftpRequest = (FtpWebRequest)WebRequest.Create(url);
+                    ftpRequest.UseBinary = true;
+                    ftpRequest.UsePassive = true;
+                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
+                    ftpRequest.Credentials = networkCredential;
+
+                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+                    bytes_total = ftpResponse.ContentLength;
+                    ftpResponse.Close();
+                }
+                catch(Exception ex)
+                {
+                    if (ftpResponse != null)
+                        ftpResponse.Close();
+
+                    txt_progressStatus.Text = ex.Message;
+                    btn_Launch.Enabled = true;
+                    return;
+                }
+
+                WebClient client = new WebClient();
+                client.Credentials = networkCredential;
+                client.DownloadProgressChanged += download_file_DownloadProgressChanged;
+                client.DownloadFileCompleted += download_file_DownloadFileCompleted;
 
                 client.DownloadFileAsync(new Uri(url), Path_TempDownload + dfileName);
                 txt_progressStatus.Tag = dfileName;
@@ -1447,6 +1463,9 @@ namespace spNLauncherArma3
 
         void download_file_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            downloadUrls.Dequeue();
+            SaveDownloadQueue();
+
             sw.Reset();
 
             if (e.Error != null)
@@ -1465,6 +1484,26 @@ namespace spNLauncherArma3
             }
         }
 
+        private void SaveDownloadQueue()
+        {
+            if (downloadUrls.Count != 0)
+            {
+                string aux_downloadQueue = "";
+                foreach (var item in downloadUrls)
+                {
+                    if (aux_downloadQueue == "")
+                        aux_downloadQueue = item + ",";
+                    else
+                        aux_downloadQueue = aux_downloadQueue + item + ",";
+                }
+                Properties.Settings.Default.downloadQueue = aux_downloadQueue;
+            }
+            else
+            { Properties.Settings.Default.downloadQueue = ""; }
+
+            Properties.Settings.Default.Save();
+        }
+
         static double ConvertBytesToMegabytes(long bytes)
         {
             return (bytes / 1024) / 1024;
@@ -1472,6 +1511,9 @@ namespace spNLauncherArma3
 
         void download_file_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            if (numDownloaded > numDownloads)
+                numDownloaded--;
+
             if (e.ProgressPercentage < 100)
             {
                 if ((e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds) > 999)
@@ -1479,8 +1521,8 @@ namespace spNLauncherArma3
                 else
                     aux_downSpeed = (e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds).ToString("0") + " kb/s";
 
-                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + e.ProgressPercentage + "%");
-                txt_percentageStatus.Text = ConvertBytesToMegabytes(e.BytesReceived) + "MB of " + ConvertBytesToMegabytes(e.TotalBytesToReceive) + "MB / " + aux_downSpeed;
+                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0) + "%");
+                txt_percentageStatus.Text = ConvertBytesToMegabytes(e.BytesReceived) + "MB of " + ConvertBytesToMegabytes(bytes_total) + "MB / " + aux_downSpeed;
             }
             else
             {
@@ -1488,11 +1530,12 @@ namespace spNLauncherArma3
                 txt_percentageStatus.Text = "";
             }
 
-            prb_progressBar.Value = e.ProgressPercentage;
+            prb_progressBar.Value = (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0);
         }
 
         void Install()
         {
+            isDownloading = false;
             progressStatusText("Installing files...");
             prb_progressBar.Value = 0;
             prb_progressBar.Style = ProgressBarStyle.Marquee;
@@ -1502,7 +1545,7 @@ namespace spNLauncherArma3
             btn_ereaseModsDirectory.Enabled = false;
             btn_browseModsDirectory.Enabled = false;
 
-            backgroundWorker.RunWorkerAsync();
+            backgroundInstaller.RunWorkerAsync();
         }
 
         void ztundread()
@@ -1519,13 +1562,14 @@ namespace spNLauncherArma3
             }
         }
 
-        private async void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private async void backgroundInstaller_DoWork(object sender, DoWorkEventArgs e)
         {
             Thread.Sleep(10);
 
             bool isTFR = false;
             bool isRHS_AFRF = false;
             bool isRHS_USF = false;
+
             bool allFine = true;
             string aux_ModsFolder = AddonsFolder;
 
@@ -1552,7 +1596,7 @@ namespace spNLauncherArma3
                             string filePath = "";
                             int i = 0;
 
-                            if (zipFile.Contains("mission_files"))
+                            if (zipFile.Contains(activePack))
                                 aux_ModsFolder = GameFolder;
                             else
                                 aux_ModsFolder = AddonsFolder;
@@ -1564,7 +1608,7 @@ namespace spNLauncherArma3
                                     filePath = Path.Combine(aux_ModsFolder, entry.FullName).Replace(@"/", @"\\").Replace(@"\\", @"\");
 
                                     string[] aux_topFolder = entry.FullName.Split('/');
-                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])))
+                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])) && filePath.EndsWith(@"\"))
                                         Directory.CreateDirectory(Path.Combine(aux_ModsFolder, aux_topFolder[0]));
 
                                     if (!entry.FullName.Contains(@"\."))
@@ -1728,9 +1772,15 @@ namespace spNLauncherArma3
             Thread.Sleep(1500);
         }
 
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void backgroundInstaller_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             prb_progressBar.State = ProgressBarState.Normal;
+
+            if(downloadJSRS)
+                btn_downloadJSRS.Enabled = true;
+
+            if (downloadBlastcore)
+                btn_downloadBlastcore.Enabled = true;
 
             try
             {
@@ -1751,7 +1801,7 @@ namespace spNLauncherArma3
             else if (!e.Cancelled)
             {
                 txt_progressStatus.Text = "Waiting for orders";
-                getAddons();
+                GetAddons();
             }
 
 
@@ -1867,7 +1917,7 @@ namespace spNLauncherArma3
         private void btn_reloadAddons_Click(object sender, EventArgs e)
         {
             FetchRemoteSettings();
-            getAddons();
+            GetAddons();
         }
 
         private void btn_Launch_MouseEnter(object sender, EventArgs e)
@@ -1911,20 +1961,40 @@ namespace spNLauncherArma3
 
         private void btn_downloadJSRS_Click(object sender, EventArgs e)
         {
-            modsUrl.Clear();
-            modsUrl.Add(jsrsUrl);
-            downloadFile(modsUrl);
+            if (!isDownloading)
+            {
+                modsUrl.Clear();
+                modsUrl.Add(jsrsUrl);
+                btn_Launch.Enabled = false;
+                downloadQueue.RunWorkerAsync();
+            }
+            else
+            {
+                numDownloads++;
+                downloadUrls.Enqueue(jsrsUrl);
+            }
 
-            btn_Launch.Enabled = false;
+            btn_downloadJSRS.Enabled = false;
+            downloadJSRS = true;
         }
 
         private void btn_downloadBlastcore_Click(object sender, EventArgs e)
         {
-            modsUrl.Clear();
-            modsUrl.Add(blastcoreUrl);
-            downloadFile(modsUrl);
+            if (!isDownloading)
+            {
+                modsUrl.Clear();
+                modsUrl.Add(blastcoreUrl);
+                btn_Launch.Enabled = false;
+                downloadQueue.RunWorkerAsync();
+            }
+            else
+            {
+                numDownloads++;
+                downloadUrls.Enqueue(blastcoreUrl);
+            }
 
-            btn_Launch.Enabled = false;
+            btn_downloadBlastcore.Enabled = false;
+            downloadBlastcore = true;
         }
 
         private void btn_ereaseModsDirectory_Click(object sender, EventArgs e)
@@ -1943,7 +2013,7 @@ namespace spNLauncherArma3
                     Properties.Settings.Default.AddonsFolder = dlg_folderBrowser.SelectedPath + @"\";
                     Properties.Settings.Default.Save();
                     txtb_modsDirectory.Text = dlg_folderBrowser.SelectedPath;
-                    getAddons();
+                    GetAddons();
                 }
                 else
                     MessageBox.Show("The Addons folder can't be the same as the Game folder.\nWe recommend you to have a specific folder for the addons on this launcher to avoid conflicts.", "Wrong directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1965,7 +2035,7 @@ namespace spNLauncherArma3
                 Properties.Settings.Default.AddonsFolder = txtb_modsDirectory.Text + @"\";
                 Properties.Settings.Default.Save();
 
-                getAddons();
+                GetAddons();
                 modsDir_previousDir = txtb_modsDirectory.Text;
             }
             else
@@ -1995,7 +2065,7 @@ namespace spNLauncherArma3
 
         private void backgroundFetchNews_DoWork(object sender, DoWorkEventArgs e)
         {
-            FeedMethod.GetRSSNews();
+            //FeedMethod.GetRSSNews();
         }
 
         private void delayFecthNews_Tick(object sender, EventArgs e)
@@ -2017,6 +2087,7 @@ namespace spNLauncherArma3
         private void btn_reloadRemoteSettings_Click(object sender, EventArgs e)
         {
             FetchRemoteSettings();
+            GetAddons();
         }
 
         private void btn_showRemoteSettings_Click(object sender, EventArgs e)
@@ -2090,6 +2161,19 @@ namespace spNLauncherArma3
             {
                 MessageBox.Show("No such directory \"" + AddonsFolder + @"@task_force_radio\plugins" + "\".", "No such file or directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btn_downloadConfigs_Click(object sender, EventArgs e)
+        {
+            if (!isDownloading)
+            {
+                modsUrl.Clear();
+                modsUrl.Add(cfgUrl);
+                btn_Launch.Enabled = false;
+                downloadQueue.RunWorkerAsync();
+            }
+
+            btn_downloadConfigs.Enabled = false;
         }
     }
 }
