@@ -106,7 +106,7 @@ namespace spNLauncherArma3.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Beta Release.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string S_VersionTag {
             get {
