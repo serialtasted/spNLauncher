@@ -133,7 +133,7 @@
     <value>https://dl.dropbox.com/u/3609589/spNLauncher/Releases/zUpdator.exe</value>
   </data>
   <data name="S_VersionTag" xml:space="preserve">
-    <value>Beta Release</value>
+    <value />
   </data>
   <data name="S_VersionXML" xml:space="preserve">
     <value>https://dl.dropbox.com/u/3609589/spNLauncher/Xml/version.xml</value>

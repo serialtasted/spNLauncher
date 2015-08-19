@@ -149,7 +149,7 @@ namespace spNLauncherArma3.Workers
             {
                 try
                 {
-#region NewUpdateXmlInfo
+                    #region NewUpdateXmlInfo
                     XmlDocument NewUpdateXmlInfo = new XmlDocument();
                     NewUpdateXmlInfo.Load(urlversionxml);
 
@@ -159,7 +159,7 @@ namespace spNLauncherArma3.Workers
                     string new_versiontag = NewUpdateXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//Version").Attributes["tag"].Value;
 
                     NewVersion = new Version(new_versionmajor, new_versionminor, new_versionbuild);
-#endregion
+                    #endregion
 
                     if (NewVersion.Build != 0)
                         aux_vBuild = "." + NewVersion.Build;
@@ -179,14 +179,14 @@ namespace spNLauncherArma3.Workers
 
                 try
                 {
-#region CurVersionXmlInfo
+                    #region CurVersionXmlInfo
                     int cur_versionmajor = Assembly.GetExecutingAssembly().GetName().Version.Major;
                     int cur_versionminor = Assembly.GetExecutingAssembly().GetName().Version.Minor;
                     int cur_versionbuild = Assembly.GetExecutingAssembly().GetName().Version.Build;
                     string cur_versiontag = Properties.GlobalValues.S_VersionTag;
 
                     CurVersion = new Version(cur_versionmajor, cur_versionminor, cur_versionbuild);
-#endregion
+                    #endregion
 
                     if (CurVersion.Build != 0)
                         aux_vBuild = "." + CurVersion.Build;
@@ -195,6 +195,8 @@ namespace spNLauncherArma3.Workers
 
                     if (cur_versiontag != "")
                         txt_Cur.Text = CurVersion.Major + "." + CurVersion.Minor + aux_vBuild + " (" + cur_versiontag + ")";
+                    else
+                        txt_Cur.Text = CurVersion.Major + "." + CurVersion.Minor + aux_vBuild;
                 }
                 catch (Exception CurEx)
                 {
