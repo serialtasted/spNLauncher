@@ -1608,7 +1608,7 @@ namespace spNLauncherArma3
                                     filePath = Path.Combine(aux_ModsFolder, entry.FullName).Replace(@"/", @"\\").Replace(@"\\", @"\");
 
                                     string[] aux_topFolder = entry.FullName.Split('/');
-                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])) && filePath.EndsWith(@"\"))
+                                    if (!Directory.Exists(Path.Combine(aux_ModsFolder, aux_topFolder[0])) && aux_topFolder.Length > 1)
                                         Directory.CreateDirectory(Path.Combine(aux_ModsFolder, aux_topFolder[0]));
 
                                     if (!entry.FullName.Contains(@"\."))
