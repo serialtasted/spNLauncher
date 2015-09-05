@@ -378,6 +378,7 @@
     <None Include="Resources\times-circle-o.png" />
     <None Include="Resources\check-circle1.png" />
     <None Include="Resources\archive_hover.png" />
+    <None Include="Resources\equalizer.png" />
     <Content Include="spn_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

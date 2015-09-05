@@ -430,5 +430,53 @@ namespace spNLauncherArma3.Properties {
                 this["downloadQueue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool startGameAfterDownload {
+            get {
+                return ((bool)(this["startGameAfterDownload"]));
+            }
+            set {
+                this["startGameAfterDownload"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool runLauncherOnStartup {
+            get {
+                return ((bool)(this["runLauncherOnStartup"]));
+            }
+            set {
+                this["runLauncherOnStartup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool allowNotifications {
+            get {
+                return ((bool)(this["allowNotifications"]));
+            }
+            set {
+                this["allowNotifications"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool autoDownload {
+            get {
+                return ((bool)(this["autoDownload"]));
+            }
+            set {
+                this["autoDownload"] = value;
+            }
+        }
     }
 }

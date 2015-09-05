@@ -425,6 +425,11 @@ namespace spNLauncherArma3
                 if (s != "")
                     lstb_activeAddons.Items.Add(s);
             }
+
+            pref_startGameAfterDownloadsAreCompleted.Checked = Properties.Settings.Default.startGameAfterDownload;
+            pref_runLauncherOnStartup.Checked = Properties.Settings.Default.runLauncherOnStartup;
+            pref_allowNotifications.Checked = Properties.Settings.Default.allowNotifications;
+            pref_allowNotifications.Checked = Properties.Settings.Default.autoDownload;
         }
 
         void SaveSettings()
@@ -472,6 +477,11 @@ namespace spNLauncherArma3
                     aux_activeMods = aux_activeMods + item + ",";
             }
             Properties.Settings.Default.activeMods = aux_activeMods;
+
+            Properties.Settings.Default.startGameAfterDownload = pref_startGameAfterDownloadsAreCompleted.Checked;
+            Properties.Settings.Default.runLauncherOnStartup = pref_runLauncherOnStartup.Checked;
+            Properties.Settings.Default.allowNotifications = pref_allowNotifications.Checked;
+            Properties.Settings.Default.autoDownload = pref_allowNotifications.Checked;
 
             Properties.Settings.Default.Save();
         }
@@ -1789,7 +1799,7 @@ namespace spNLauncherArma3
             }
             catch { }
 
-            if (!e.Cancelled && isLaunch)
+            if (!e.Cancelled && isLaunch && pref_startGameAfterDownloadsAreCompleted.Checked)
             {
                 isLaunch = false;
                 prb_progressBar.Style = ProgressBarStyle.Marquee;
@@ -1797,6 +1807,11 @@ namespace spNLauncherArma3
                 txt_progressStatus.Text = "Launching game...";
 
                 delayLaunch.Start();
+            }
+            else if (!e.Cancelled && isLaunch && !pref_startGameAfterDownloadsAreCompleted.Checked)
+            {
+                isLaunch = false;
+                txt_progressStatus.Text = "Game ready to launch...";
             }
             else if (!e.Cancelled)
             {
