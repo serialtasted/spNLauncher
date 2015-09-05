@@ -46,9 +46,22 @@ namespace spNLauncherArma3
         private string AddonsFolder = "";
 
         private string activePack = "";
-        private string serverIp = "";
-        private string serverPort = "";
-        private string serverPassword = "";
+
+        private string[] serverInfo = new string[3];
+        private string[] tsInfo = new string[4];
+
+        /* 
+        Array content list:
+            serverInfo[0]: server ip
+            serverInfo[1]: server port
+            serverInfo[2]: server password
+
+            tsInfo[0]: server ip
+            tsInfo[1]: server port
+            tsInfo[2]: server password
+            tsInfo[3]: default channel
+        */
+
         private bool isBlastcoreAllowed = false;
         private bool isJSRSAllowed = false;
         private bool isOptionalAllowed = false;
@@ -525,10 +538,16 @@ namespace spNLauncherArma3
 
                 activePack = Properties.Settings.Default.lastAddonPack;
 
+                //TeamSpeak server Info
+                tsInfo[0] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//TeamSpeak").Attributes["ip"].Value;
+                tsInfo[1] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//TeamSpeak").Attributes["port"].Value;
+                tsInfo[2] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//TeamSpeak").Attributes["password"].Value;
+                tsInfo[3] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//TeamSpeak").Attributes["channel"].Value;
+
                 //ModSet Files
-                serverIp = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["ip"].Value;
-                serverPort = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["port"].Value;
-                serverPassword = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["password"].Value;
+                serverInfo[0] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["ip"].Value;
+                serverInfo[1] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["port"].Value;
+                serverInfo[2] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["password"].Value;
 
                 isBlastcoreAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["blastcore"].Value);
                 isJSRSAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["jsrs"].Value);
@@ -1244,7 +1263,7 @@ namespace spNLauncherArma3
                 SaveSettings();
 
                 if (PrepareLaunch.isModPackInstalled(modsName, modsUrl))
-                    PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
+                    PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverInfo, tsInfo);
                 else
                     downloadQueue.RunWorkerAsync();
             }
@@ -1834,7 +1853,7 @@ namespace spNLauncherArma3
         private void delayLaunch_Tick(object sender, EventArgs e)
         {
             delayLaunch.Stop();
-            PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverIp, serverPort, serverPassword);
+            PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverInfo, tsInfo);
 
             prb_progressBar.Style = ProgressBarStyle.Continuous;
             prb_progressBar.Value = 0;
@@ -2119,7 +2138,7 @@ namespace spNLauncherArma3
                     break;
             }
 
-            MessageBox.Show("Temp Path: " + Path_TempDownload + "\nConfig File: " + cfgFile + "\nGame Server: " + serverIp + ":" + serverPort + "\n\nActive Mods:" + aux_listMods, "Fetched remote settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Temp Path: " + Path_TempDownload + "\nConfig File: " + cfgFile + "\nGame Server: " + serverInfo[0] + ":" + serverInfo[1] + "\n\nActive Mods:" + aux_listMods, "Fetched remote settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btn_reinstallTFRPlugins_Click(object sender, EventArgs e)

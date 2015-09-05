@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,10 +14,16 @@ namespace spNLauncherArma3.Workers
 {
     class LaunchCore
     {
+        private BackgroundWorker waitEndGame = new BackgroundWorker();
         private string GameFolder = Properties.Settings.Default.Arma3Folder;
         private string AddonsFolder = Properties.Settings.Default.AddonsFolder;
         private string TSFolder = Properties.Settings.Default.TS3Folder;
         private string Arguments = "";
+
+        private Process auxProcess;
+        private Form auxMainForm;
+        private PictureBox auxLaunch;
+        private Label auxStatus;
 
         public LaunchCore(bool noLogs,
             bool noPause,
@@ -196,20 +203,41 @@ namespace spNLauncherArma3.Workers
             else return false;
         }
 
-        public void LaunchGame(string Arguments, Form mainForm, Label Status, PictureBox Launch, string serverip, string serverport, string password)
+        public void LaunchGame(string Arguments, Form mainForm, Label Status, PictureBox Launch, string[] serverInfo, string[] tsInfo)
         {
+            /* 
+            Array content list:
+                serverInfo[0]: server ip
+                serverInfo[1]: server port
+                serverInfo[2]: server password
+
+                tsInfo[0]: server ip
+                tsInfo[1]: server port
+                tsInfo[2]: server password
+                tsInfo[3]: default channel
+            */
+
+            waitEndGame.WorkerSupportsCancellation = true;
+            waitEndGame.WorkerReportsProgress = true;
+            waitEndGame.DoWork += WaitEndGame_DoWork;
+            waitEndGame.RunWorkerCompleted += WaitEndGame_RunWorkerCompleted;
+
+            auxMainForm = mainForm;
+            auxLaunch = Launch;
+            auxStatus = Status;
+
             string aux_Arguments = "";
             Ping ping = new Ping();
 
-            if (serverip != "" && serverport != "")
+            if (serverInfo[0] != "" && serverInfo[2] != "")
             {
-                PingReply pingresult = ping.Send(serverip);
+                PingReply pingresult = ping.Send(serverInfo[0]);
                 if (pingresult.Status == IPStatus.Success)
                 {
-                    if (password != "")
-                        aux_Arguments = "-connect=" + serverip + " -port=" + serverport + " -password=\"" + password + "\" " + Arguments;
+                    if (serverInfo[2] != "")
+                        aux_Arguments = "-connect=" + serverInfo[0] + " -port=" + serverInfo[1] + " -password=\"" + serverInfo[2] + "\" " + Arguments;
                     else
-                        aux_Arguments = "-connect=" + serverip + " -port=" + serverport + " " + Arguments;
+                        aux_Arguments = "-connect=" + serverInfo[0] + " -port=" + serverInfo[1] + " " + Arguments;
                 }
                 else
                 {
@@ -221,26 +249,36 @@ namespace spNLauncherArma3.Workers
 
             //Clipboard.SetText(aux_Arguments);
 
-            /*try
+            if (Process.GetProcessesByName("ts3client_win64").Length <= 0 || Process.GetProcessesByName("ts3client_win32").Length <= 0)
             {
-                var fass = new ProcessStartInfo();
-                fass.WorkingDirectory = TSFolder;
+                try
+                {
+                    var fass = new ProcessStartInfo();
+                    fass.WorkingDirectory = TSFolder;
 
-                if (File.Exists(TSFolder + "ts3client_win64.exe"))
-                    fass.FileName = "ts3client_win64.exe";
+                    if (tsInfo[0] != "" && tsInfo[2] != "")
+                        fass.Arguments = "ts3server://\"" + tsInfo[0] + "/?port=" + tsInfo[1] + "&channel=" + tsInfo[3] + "\"";
+                    else if (tsInfo[0] != "")
+                        fass.Arguments = "ts3server://\"" + tsInfo[0] + "/?port=" + tsInfo[1] + "&password=" + tsInfo[2] + "&channel=" + tsInfo[3] + "\"";
 
-                if (File.Exists(TSFolder + "ts3client_win32.exe"))
-                    fass.FileName = "ts3client_win32.exe";
+                    if (File.Exists(TSFolder + "ts3client_win64.exe"))
+                        fass.FileName = "ts3client_win64.exe";
 
-                var process = new Process();
-                process.StartInfo = fass;
+                    if (File.Exists(TSFolder + "ts3client_win32.exe"))
+                        fass.FileName = "ts3client_win32.exe";
 
-                process.Start();
+                    var process = new Process();
+                    process.StartInfo = fass;
+
+                    process.Start();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }*/
+            else
+            { MessageBox.Show("TS already running"); }
 
             try
             {
@@ -251,6 +289,7 @@ namespace spNLauncherArma3.Workers
 
                 var process = new Process();
                 process.StartInfo = fass;
+                auxProcess = process;
                 process.Start();
 
                 Thread.Sleep(500);
@@ -260,10 +299,8 @@ namespace spNLauncherArma3.Workers
                 Status.Text = "Game running...";
                 Launch.Enabled = false;
                 mainForm.WindowState = FormWindowState.Minimized;
-                process.WaitForExit();
-                mainForm.WindowState = FormWindowState.Normal;
-                Launch.Enabled = true;
-                Status.Text = "Waiting for orders...";
+                mainForm.Cursor = Cursors.Default;
+                waitEndGame.RunWorkerAsync();
 
                 //MessageBox.Show("Iniciou");
             }
@@ -272,6 +309,19 @@ namespace spNLauncherArma3.Workers
                 MessageBox.Show(ex.Message);
                 Application.Exit();
             }
+        }
+
+        private void WaitEndGame_DoWork(object sender, DoWorkEventArgs e)
+        {
+            auxProcess.WaitForExit();
+        }
+
+        private void WaitEndGame_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            auxMainForm.WindowState = FormWindowState.Normal;
+            auxMainForm.Focus();
+            auxLaunch.Enabled = true;
+            auxStatus.Text = "Waiting for orders...";
         }
     }
 }
