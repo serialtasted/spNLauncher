@@ -77,7 +77,7 @@
             // 
             // panel5
             // 
-            this.panel5.BackColor = System.Drawing.Color.Brown;
+            this.panel5.BackColor = System.Drawing.Color.OliveDrab;
             this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel5.Location = new System.Drawing.Point(0, 34);
             this.panel5.Name = "panel5";

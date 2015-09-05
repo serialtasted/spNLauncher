@@ -29,23 +29,22 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackBlock));
             this.txt_title = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btn_showAddons = new System.Windows.Forms.PictureBox();
+            this.img_checkAllowed = new System.Windows.Forms.PictureBox();
+            this.btn_useThis = new System.Windows.Forms.PictureBox();
             this.panel_bgTitle = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.txt_version = new System.Windows.Forms.Label();
             this.txt_content = new System.Windows.Forms.Label();
             this.txt_allowed = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btn_showAddons = new System.Windows.Forms.PictureBox();
-            this.img_checkAllowed = new System.Windows.Forms.PictureBox();
-            this.btn_useThis = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
-            this.panel_bgTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btn_showAddons)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_checkAllowed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btn_useThis)).BeginInit();
+            this.panel_bgTitle.SuspendLayout();
             this.SuspendLayout();
             // 
             // txt_title
@@ -75,6 +74,45 @@
             this.panel1.Size = new System.Drawing.Size(860, 174);
             this.panel1.TabIndex = 6;
             // 
+            // btn_showAddons
+            // 
+            this.btn_showAddons.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_showAddons.Image = global::spNLauncherArma3.Properties.Resources.archive_w;
+            this.btn_showAddons.Location = new System.Drawing.Point(724, 139);
+            this.btn_showAddons.Name = "btn_showAddons";
+            this.btn_showAddons.Size = new System.Drawing.Size(16, 16);
+            this.btn_showAddons.TabIndex = 16;
+            this.btn_showAddons.TabStop = false;
+            this.toolTip1.SetToolTip(this.btn_showAddons, "Addons on this pack");
+            this.btn_showAddons.Click += new System.EventHandler(this.btn_showAddons_Click);
+            this.btn_showAddons.MouseLeave += new System.EventHandler(this.btn_showAddons_MouseLeave);
+            this.btn_showAddons.MouseHover += new System.EventHandler(this.btn_showAddons_MouseHover);
+            // 
+            // img_checkAllowed
+            // 
+            this.img_checkAllowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.img_checkAllowed.BackgroundImage = global::spNLauncherArma3.Properties.Resources.check_circle;
+            this.img_checkAllowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.img_checkAllowed.Location = new System.Drawing.Point(11, 141);
+            this.img_checkAllowed.Name = "img_checkAllowed";
+            this.img_checkAllowed.Size = new System.Drawing.Size(12, 13);
+            this.img_checkAllowed.TabIndex = 14;
+            this.img_checkAllowed.TabStop = false;
+            this.img_checkAllowed.Visible = false;
+            // 
+            // btn_useThis
+            // 
+            this.btn_useThis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_useThis.Image = global::spNLauncherArma3.Properties.Resources.useThis_inactive;
+            this.btn_useThis.Location = new System.Drawing.Point(755, 129);
+            this.btn_useThis.Name = "btn_useThis";
+            this.btn_useThis.Size = new System.Drawing.Size(100, 40);
+            this.btn_useThis.TabIndex = 13;
+            this.btn_useThis.TabStop = false;
+            this.btn_useThis.Click += new System.EventHandler(this.btn_useThis_Click);
+            this.btn_useThis.MouseLeave += new System.EventHandler(this.btn_useThis_MouseLeave);
+            this.btn_useThis.MouseHover += new System.EventHandler(this.btn_useThis_MouseHover);
+            // 
             // panel_bgTitle
             // 
             this.panel_bgTitle.BackColor = System.Drawing.Color.DimGray;
@@ -89,7 +127,7 @@
             // 
             // panel2
             // 
-            this.panel2.BackColor = System.Drawing.Color.Brown;
+            this.panel2.BackColor = System.Drawing.Color.OliveDrab;
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 34);
             this.panel2.Name = "panel2";
@@ -136,45 +174,6 @@
             this.txt_allowed.Text = "Allowed: ";
             this.txt_allowed.Visible = false;
             // 
-            // btn_showAddons
-            // 
-            this.btn_showAddons.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_showAddons.Image = global::spNLauncherArma3.Properties.Resources.archive_w;
-            this.btn_showAddons.Location = new System.Drawing.Point(724, 139);
-            this.btn_showAddons.Name = "btn_showAddons";
-            this.btn_showAddons.Size = new System.Drawing.Size(16, 16);
-            this.btn_showAddons.TabIndex = 16;
-            this.btn_showAddons.TabStop = false;
-            this.toolTip1.SetToolTip(this.btn_showAddons, "Addons on this pack");
-            this.btn_showAddons.Click += new System.EventHandler(this.btn_showAddons_Click);
-            this.btn_showAddons.MouseLeave += new System.EventHandler(this.btn_showAddons_MouseLeave);
-            this.btn_showAddons.MouseHover += new System.EventHandler(this.btn_showAddons_MouseHover);
-            // 
-            // img_checkAllowed
-            // 
-            this.img_checkAllowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.img_checkAllowed.BackgroundImage = global::spNLauncherArma3.Properties.Resources.check_circle;
-            this.img_checkAllowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.img_checkAllowed.Location = new System.Drawing.Point(11, 141);
-            this.img_checkAllowed.Name = "img_checkAllowed";
-            this.img_checkAllowed.Size = new System.Drawing.Size(12, 13);
-            this.img_checkAllowed.TabIndex = 14;
-            this.img_checkAllowed.TabStop = false;
-            this.img_checkAllowed.Visible = false;
-            // 
-            // btn_useThis
-            // 
-            this.btn_useThis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_useThis.Image = ((System.Drawing.Image)(resources.GetObject("btn_useThis.Image")));
-            this.btn_useThis.Location = new System.Drawing.Point(755, 129);
-            this.btn_useThis.Name = "btn_useThis";
-            this.btn_useThis.Size = new System.Drawing.Size(100, 40);
-            this.btn_useThis.TabIndex = 13;
-            this.btn_useThis.TabStop = false;
-            this.btn_useThis.Click += new System.EventHandler(this.btn_useThis_Click);
-            this.btn_useThis.MouseLeave += new System.EventHandler(this.btn_useThis_MouseLeave);
-            this.btn_useThis.MouseHover += new System.EventHandler(this.btn_useThis_MouseHover);
-            // 
             // PackBlock
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -189,11 +188,11 @@
             this.Size = new System.Drawing.Size(860, 174);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel_bgTitle.ResumeLayout(false);
-            this.panel_bgTitle.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btn_showAddons)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_checkAllowed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btn_useThis)).EndInit();
+            this.panel_bgTitle.ResumeLayout(false);
+            this.panel_bgTitle.PerformLayout();
             this.ResumeLayout(false);
 
         }

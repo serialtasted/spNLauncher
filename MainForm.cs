@@ -939,19 +939,19 @@ namespace spNLauncherArma3
         -----------------------------------*/
         private void HideUnhide(int selectedOption)
         {
-            if (selectedOption == 0) { menu_news.ForeColor = Color.Brown; panel_news.Visible = true; FeedContentPanel.Focus(); }
+            if (selectedOption == 0) { menu_news.ForeColor = Color.OliveDrab; panel_news.Visible = true; FeedContentPanel.Focus(); }
             else { menu_news.ForeColor = Color.Gray; panel_news.Visible = false; }
 
-            if (selectedOption == 1) { menu_community.ForeColor = Color.Brown; panel_community.Visible = true; }
+            if (selectedOption == 1) { menu_community.ForeColor = Color.OliveDrab; panel_community.Visible = true; }
             else { menu_community.ForeColor = Color.Gray; panel_community.Visible = false; }
 
-            if (selectedOption == 2) { menu_launchOptions.ForeColor = Color.Brown; panel_launchOptions.Visible = true; }
+            if (selectedOption == 2) { menu_launchOptions.ForeColor = Color.OliveDrab; panel_launchOptions.Visible = true; }
             else { menu_launchOptions.ForeColor = Color.Gray; panel_launchOptions.Visible = false; }
 
-            if (selectedOption == 3) { menu_help.ForeColor = Color.Brown; panel_help.Visible = true; }
+            if (selectedOption == 3) { menu_help.ForeColor = Color.OliveDrab; panel_help.Visible = true; }
             else { menu_help.ForeColor = Color.Gray; panel_help.Visible = false; }
 
-            if (selectedOption == 4) { menu_about.ForeColor = Color.Brown; panel_about.Visible = true; }
+            if (selectedOption == 4) { menu_about.ForeColor = Color.OliveDrab; panel_about.Visible = true; }
             else { menu_about.ForeColor = Color.Gray; panel_about.Visible = false; }
         }
 
@@ -974,7 +974,7 @@ namespace spNLauncherArma3
             if (menuSelected != 0)
                 menu_news.ForeColor = Color.Gray;
             else
-                menu_news.ForeColor = Color.Brown;
+                menu_news.ForeColor = Color.OliveDrab;
         }
 
         /*-----------------------------------
@@ -996,7 +996,7 @@ namespace spNLauncherArma3
             if (menuSelected != 1)
                 menu_community.ForeColor = Color.Gray;
             else
-                menu_community.ForeColor = Color.Brown;
+                menu_community.ForeColor = Color.OliveDrab;
         }
 
         /*-----------------------------------
@@ -1018,7 +1018,7 @@ namespace spNLauncherArma3
             if (menuSelected != 2)
                 menu_launchOptions.ForeColor = Color.Gray;
             else
-                menu_launchOptions.ForeColor = Color.Brown;
+                menu_launchOptions.ForeColor = Color.OliveDrab;
         }
 
         /*-----------------------------------
@@ -1040,7 +1040,7 @@ namespace spNLauncherArma3
             if (menuSelected != 3)
                 menu_help.ForeColor = Color.Gray;
             else
-                menu_help.ForeColor = Color.Brown;
+                menu_help.ForeColor = Color.OliveDrab;
         }
 
         /*-----------------------------------
@@ -1062,7 +1062,7 @@ namespace spNLauncherArma3
             if (menuSelected != 4)
                 menu_about.ForeColor = Color.Gray;
             else
-                menu_about.ForeColor = Color.Brown;
+                menu_about.ForeColor = Color.OliveDrab;
         }
 
         /*-----------------------------------

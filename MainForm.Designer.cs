@@ -1506,9 +1506,9 @@
             this.label20.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label20.Location = new System.Drawing.Point(10, 10);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(177, 20);
+            this.label20.Size = new System.Drawing.Size(143, 20);
             this.label20.TabIndex = 3;
-            this.label20.Text = "Using the spN Launcher:";
+            this.label20.Text = "Using the launcher:";
             this.label20.UseMnemonic = false;
             // 
             // label19
@@ -1651,7 +1651,7 @@
             // 
             this.menu_news.AutoSize = true;
             this.menu_news.Font = new System.Drawing.Font("Segoe UI", 20F);
-            this.menu_news.ForeColor = System.Drawing.Color.Brown;
+            this.menu_news.ForeColor = System.Drawing.Color.OliveDrab;
             this.menu_news.Location = new System.Drawing.Point(7, 3);
             this.menu_news.Name = "menu_news";
             this.menu_news.Size = new System.Drawing.Size(168, 37);
@@ -2003,7 +2003,7 @@
             this.btn_reinstallTFRPlugins,
             this.btn_downloadConfigs});
             this.menu_moreOptions.Name = "menu_moreOptions";
-            this.menu_moreOptions.Size = new System.Drawing.Size(209, 114);
+            this.menu_moreOptions.Size = new System.Drawing.Size(209, 92);
             // 
             // menu_RemoteSettings
             // 
@@ -2122,7 +2122,7 @@
             this.Name = "MainForm";
             this.Opacity = 0D;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "spN Launcher";
+            this.Text = "PTrangers Launcher";
             this.TransparencyKey = System.Drawing.Color.Lime;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
