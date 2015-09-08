@@ -555,34 +555,32 @@ namespace spNLauncherArma3
                         {
                             foreach (string d in Directory.GetDirectories(AddonsFolder))
                             {
-                                if (d.Contains(xn.Attributes["name"].Value))
+                                if (d.Equals(xn.Attributes["name"].Value))
                                 {
                                     try
                                     {
-                                        if (!d.Contains("@dummy"))
+                                        if (d.Contains("dummy")) { isInstalled = true; break; }
+
+                                        foreach (var line in File.ReadAllLines(d + @"\spNversionController"))
                                         {
-                                            foreach (var line in File.ReadAllLines(d + @"\spNversionController"))
+                                            if (line.Contains("version"))
                                             {
-                                                if (line.Contains("version"))
-                                                {
-                                                    string aux_line = line.Replace(" ", "");
-                                                    string[] splitted_line = aux_line.Split('=');
+                                                string aux_line = line.Replace(" ", "");
+                                                string[] splitted_line = aux_line.Split('=');
 
-                                                    aLocal = new Version(splitted_line[1]);
-                                                    aRemote = new Version(xn.Attributes["version"].Value);
-                                                    break;
-                                                }
-                                            }
-
-                                            if (aRemote != aLocal)
-                                            {
-                                                if (!d.Contains("RHS"))
-                                                    Directory.Delete(d, true);
-
-                                                isInstalled = false;
+                                                aLocal = new Version(splitted_line[1]);
+                                                aRemote = new Version(xn.Attributes["version"].Value);
                                                 break;
                                             }
-                                            else { isInstalled = true; break; }
+                                        }
+
+                                        if (aRemote != aLocal)
+                                        {
+                                            if (!d.Contains("RHS"))
+                                                Directory.Delete(d, true);
+
+                                            isInstalled = false;
+                                            break;
                                         }
                                         else { isInstalled = true; break; }
                                     }
