@@ -257,13 +257,15 @@ namespace spNLauncherArma3.Workers
 
                 GC.Collect();
 
-                Status.Text = "Game running...";
+                Application.Exit();
+
+                /*Status.Text = "Game running...";
                 Launch.Enabled = false;
                 mainForm.WindowState = FormWindowState.Minimized;
                 process.WaitForExit();
                 mainForm.WindowState = FormWindowState.Normal;
                 Launch.Enabled = true;
-                Status.Text = "Waiting for orders...";
+                Status.Text = "Waiting for orders...";*/
 
                 //MessageBox.Show("Iniciou");
             }

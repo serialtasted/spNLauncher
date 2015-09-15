@@ -53,6 +53,7 @@ namespace spNLauncherArma3
         private bool isJSRSAllowed = false;
         private bool isOptionalAllowed = false;
 
+        private WebClient client;
         private string Path_TempDownload = Path.GetTempPath() + @"spNLauncher\";
         private List<string> modsName = new List<string>();
         private List<string> modsUrl = new List<string>();
@@ -1446,7 +1447,7 @@ namespace spNLauncherArma3
                     return;
                 }
 
-                WebClient client = new WebClient();
+                client = new WebClient();
                 client.Credentials = networkCredential;
                 client.DownloadProgressChanged += download_file_DownloadProgressChanged;
                 client.DownloadFileCompleted += download_file_DownloadFileCompleted;
