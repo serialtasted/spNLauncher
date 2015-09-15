@@ -588,7 +588,6 @@ namespace spNLauncherArma3
 
                                 if (aux_d[aux_d.Length - 1].Equals(xn.Attributes["name"].Value))
                                 {
-                                    {
                                     try
                                     {
                                         if (d.Contains("dummy")) { isInstalled = true; break; }
