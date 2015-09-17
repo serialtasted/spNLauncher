@@ -66,9 +66,6 @@ namespace spNLauncherArma3
         private int numDownloaded = 0;
 
         private long bytes_total = 0;
-        private NetworkCredential networkCredential = new NetworkCredential(Properties.GlobalValues.FTP_Username, Properties.GlobalValues.FTP_Password);
-        private FtpWebRequest ftpRequest;
-        private FtpWebResponse ftpResponse;
 
         private Stopwatch sw = new Stopwatch();
         private string aux_downSpeed = "0.00";
@@ -1352,38 +1349,7 @@ namespace spNLauncherArma3
 
         private void downloadQueue_DoWork(object sender, DoWorkEventArgs e)
         {
-            int go = 0;
-            int i = 1;
-            do
-            {
-                try
-                {
-                    ftpRequest = (FtpWebRequest)WebRequest.Create(modsUrl[0]);
-                    ftpRequest.UseBinary = true;
-                    ftpRequest.UsePassive = true;
-                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
-                    ftpRequest.Credentials = networkCredential;
-
-                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-
-                    go = 1;
-                }
-                catch (Exception ex)
-                {
-                    if (ftpRequest != null)
-                        ftpRequest.Abort();
-
-                    if (ftpResponse != null)
-                        ftpResponse.Close();
-
-                    progressStatusText("Download queue full. Retrying to download...");
-                    percentageStatusText("Attempts made: " + i);
-
-                    Thread.Sleep(10000);
-                    i++;
-                }
-
-            } while (go == 0);
+            
         }
 
         private void downloadQueue_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1396,7 +1362,7 @@ namespace spNLauncherArma3
 
         private void downloadFile(IEnumerable<string> urls, bool isUrlConfig)
         {
-            isDownloading = true;
+            /*isDownloading = true;
             txt_progressStatus.Text = "Connecting to the host...";
 
             if (cfgUrl != "" && !isUrlConfig)
@@ -1413,6 +1379,31 @@ namespace spNLauncherArma3
             if(!Directory.Exists(Path_TempDownload))
                 Directory.CreateDirectory(Path_TempDownload);
 
+            downloadFile();*/
+
+            //////////////////////////////////////////////////////////
+
+            txt_progressStatus.Text = "Connecting to the host...";
+
+            try
+            {
+                if (Directory.Exists(Path_TempDownload))
+                    Directory.Delete(Path_TempDownload, true);
+            }
+            catch { }
+
+            foreach (var url in urls)
+            {
+                downloadUrls.Enqueue(url);
+            }
+
+            if (cfgUrl != "")
+                downloadUrls.Enqueue(cfgUrl);
+
+            numDownloads = downloadUrls.Count;
+            numDownloaded = 0;
+
+            Directory.CreateDirectory(Path_TempDownload);
             downloadFile();
         }
 
@@ -1421,36 +1412,13 @@ namespace spNLauncherArma3
             if (downloadUrls.Count != 0)
             {
                 sw.Start();
-                var url = downloadUrls.Peek();
-                string dfileName = url.Substring(url.LastIndexOf("/") + 1,
-                            (url.Length - url.LastIndexOf("/") - 1));
-
-                try
-                {
-                    ftpRequest = (FtpWebRequest)WebRequest.Create(url);
-                    ftpRequest.UseBinary = true;
-                    ftpRequest.UsePassive = true;
-                    ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
-                    ftpRequest.Credentials = networkCredential;
-
-                    ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-                    bytes_total = ftpResponse.ContentLength;
-                    ftpResponse.Close();
-                }
-                catch(Exception ex)
-                {
-                    if (ftpResponse != null)
-                        ftpResponse.Close();
-
-                    txt_progressStatus.Text = ex.Message;
-                    btn_Launch.Enabled = true;
-                    return;
-                }
-
-                client = new WebClient();
-                client.Credentials = networkCredential;
+                WebClient client = new WebClient();
                 client.DownloadProgressChanged += download_file_DownloadProgressChanged;
                 client.DownloadFileCompleted += download_file_DownloadFileCompleted;
+
+                var url = downloadUrls.Dequeue();
+                string dfileName = url.Substring(url.LastIndexOf("/") + 1,
+                            (url.Length - url.LastIndexOf("/") - 1));
 
                 client.DownloadFileAsync(new Uri(url), Path_TempDownload + dfileName);
                 txt_progressStatus.Tag = dfileName;
@@ -1464,7 +1432,6 @@ namespace spNLauncherArma3
 
         void download_file_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            downloadUrls.Dequeue();
             SaveDownloadQueue();
 
             sw.Reset();
@@ -1512,9 +1479,6 @@ namespace spNLauncherArma3
 
         void download_file_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            if (numDownloaded > numDownloads)
-                numDownloaded--;
-
             if (e.ProgressPercentage < 100)
             {
                 if ((e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds) > 999)
@@ -1522,8 +1486,8 @@ namespace spNLauncherArma3
                 else
                     aux_downSpeed = (e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds).ToString("0") + " kb/s";
 
-                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0) + "%");
-                txt_percentageStatus.Text = ConvertBytesToMegabytes(e.BytesReceived) + "MB of " + ConvertBytesToMegabytes(bytes_total) + "MB / " + aux_downSpeed;
+                progressStatusText("Downloading (" + numDownloaded + "/" + numDownloads + ") " + txt_progressStatus.Tag.ToString() + "... " + e.ProgressPercentage + "%");
+                txt_percentageStatus.Text = ConvertBytesToMegabytes(e.BytesReceived) + "MB of " + ConvertBytesToMegabytes(e.TotalBytesToReceive) + "MB / " + aux_downSpeed;
             }
             else
             {
@@ -1531,7 +1495,7 @@ namespace spNLauncherArma3
                 txt_percentageStatus.Text = "";
             }
 
-            prb_progressBar.Value = (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0);
+            prb_progressBar.Value = e.ProgressPercentage;
         }
 
         void Install()
