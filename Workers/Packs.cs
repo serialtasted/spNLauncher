@@ -17,6 +17,7 @@ namespace spNLauncherArma3.Workers
         private string title = "";
         private string id = "";
         private string description = "";
+        private string cfgUrl = "";
         private string addons = "";
 
         public Packs(FlowLayoutPanel PacksPanel)
@@ -39,6 +40,7 @@ namespace spNLauncherArma3.Workers
                     title = xn.Attributes["name"].Value;
                     id = xn.Attributes["id"].Value;
                     description = xn.Attributes["description"].Value;
+                    cfgUrl = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + id).Attributes["cfgfile"].Value;
                     addons = "";
                     
 
@@ -74,7 +76,8 @@ namespace spNLauncherArma3.Workers
                         btnUsePack.Image = Properties.Resources.useThis_active;
                     }
 
-                    gflowpacks.Controls.Add(auxPack);
+                    if(Convert.ToBoolean(xn.Attributes["enable"].Value))
+                        gflowpacks.Controls.Add(auxPack);
                 }
 
                 Label Maring = new Label();

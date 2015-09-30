@@ -37,7 +37,7 @@ namespace spNLauncherArma3
         private string modsDir_previousDir = "";
 
         private bool isLaunch = false;
-        private bool isDownloading = false;
+        public bool isDownloading = false;
 
         private bool downloadJSRS = false;
         private bool downloadBlastcore = false;
@@ -501,8 +501,6 @@ namespace spNLauncherArma3
 
         public void FetchRemoteSettings()
         {
-            fetchAddonPacks.Get();
-
             bool isInstalled = false;
             modsName.Clear();
             modsUrl.Clear();
@@ -536,7 +534,23 @@ namespace spNLauncherArma3
                     }
                 }
 
-                activePack = Properties.Settings.Default.lastAddonPack;
+                //Validate if activePack exists or select first on the list
+                xmlNodes = "//spN_Launcher//ModSets//pack";
+                xnl = RemoteXmlInfo.SelectNodes(xmlNodes);
+                string firstPack = "";
+                activePack = "";
+
+                foreach (XmlNode xn in xnl)
+                {
+                    if (String.IsNullOrEmpty(firstPack) && Convert.ToBoolean(xn.Attributes["enable"].Value))
+                    { firstPack = xn.Attributes["id"].Value; }
+
+                    if (Properties.Settings.Default.lastAddonPack == xn.Attributes["id"].Value && Convert.ToBoolean(xn.Attributes["enable"].Value))
+                    { activePack = Properties.Settings.Default.lastAddonPack; break; }
+                }
+
+                if (String.IsNullOrEmpty(activePack))
+                { Properties.Settings.Default.lastAddonPack = activePack = firstPack; }
 
                 //TeamSpeak server Info
                 tsInfo[0] = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//LauncherInfo//TeamSpeak").Attributes["ip"].Value;
@@ -553,8 +567,8 @@ namespace spNLauncherArma3
                 isJSRSAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["jsrs"].Value);
                 isOptionalAllowed = Convert.ToBoolean(RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["optional"].Value);
 
-                cfgFile = activePack; ;
-                cfgUrl = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["cfgfile"].Value; ;
+                cfgFile = activePack;
+                cfgUrl = RemoteXmlInfo.SelectSingleNode("//spN_Launcher//ModSetInfo//" + activePack).Attributes["cfgfile"].Value;
 
                 if (isBlastcoreAllowed)
                 { chb_blastcore.Enabled = true; }
@@ -572,8 +586,8 @@ namespace spNLauncherArma3
                 { panel_Optional.Enabled = false; }
 
                 xmlNodes = "//spN_Launcher//ModSetInfo//" + activePack + "//mod";
-
                 xnl = RemoteXmlInfo.SelectNodes(xmlNodes);
+
                 foreach (XmlNode xn in xnl)
                 {
                     if (xn.Attributes["type"].Value == "mod")
@@ -633,6 +647,10 @@ namespace spNLauncherArma3
             {
                 MessageBox.Show(ex.Message, "Unable to fetch remote settings", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 progressStatusText("Unable to fetch remote settings.");
+            }
+            finally
+            {
+                fetchAddonPacks.Get();
             }
         }
 
@@ -1329,52 +1347,65 @@ namespace spNLauncherArma3
             }
         }
 
-        private void progressBarStyle(ProgressBarStyle prbStyle)
+        private void progressBarFileStyle(ProgressBarStyle prbStyle)
         {
-                this.prb_progressBar.Style = prbStyle;
+                this.prb_progressBar_File.Style = prbStyle;
         }
 
-        private void progressBarState(ProgressBarState prbState)
+        private void progressBarFileState(ProgressBarState prbState)
         {
-                this.prb_progressBar.State = prbState;
+                this.prb_progressBar_File.State = prbState;
         }
 
-        private void progressBarValue(int prbValue)
+        private void progressBarFileValue(int prbValue)
         {
-            if (this.prb_progressBar.InvokeRequired)
+            if (this.prb_progressBar_File.InvokeRequired)
             {
-                intCallBack d = new intCallBack(progressBarValue);
+                intCallBack d = new intCallBack(progressBarFileValue);
                 this.Invoke(d, new object[] { prbValue });
             }
             else
             {
-                this.prb_progressBar.Value = prbValue;
+                this.prb_progressBar_File.Value = prbValue;
             }
         }
 
-        private void progressBarMinimum(int prbMinimum)
+        private void progressBarFileMinimum(int prbMinimum)
         {
-            if (this.prb_progressBar.InvokeRequired)
+            if (this.prb_progressBar_File.InvokeRequired)
             {
-                intCallBack d = new intCallBack(progressBarMinimum);
+                intCallBack d = new intCallBack(progressBarFileMinimum);
                 this.Invoke(d, new object[] { prbMinimum });
             }
             else
             {
-                this.prb_progressBar.Minimum = prbMinimum;
+                this.prb_progressBar_File.Minimum = prbMinimum;
             }
         }
 
-        private void progressBarMaximum(int prbMaximum)
+        private void progressBarFileMaximum(int prbMaximum)
         {
-            if (this.prb_progressBar.InvokeRequired)
+            if (this.prb_progressBar_File.InvokeRequired)
             {
-                intCallBack d = new intCallBack(progressBarMaximum);
+                intCallBack d = new intCallBack(progressBarFileMaximum);
                 this.Invoke(d, new object[] { prbMaximum });
             }
             else
             {
-                this.prb_progressBar.Maximum = prbMaximum;
+                this.prb_progressBar_File.Maximum = prbMaximum;
+            }
+        }
+
+        private void progressBarAllValue(int prbValue)
+        {
+            if (this.prb_progressBar_File.InvokeRequired)
+            {
+                intCallBack d = new intCallBack(progressBarAllValue);
+                this.Invoke(d, new object[] { prbValue });
+            }
+            else
+            {
+                this.prb_progressBar_All.Value = prbValue;
             }
         }
 
@@ -1435,10 +1466,10 @@ namespace spNLauncherArma3
                 downloadUrls.Enqueue(url);
             }
 
-            numDownloads = downloadUrls.Count - 1;
-            numDownloaded = -1;
+            numDownloads = downloadUrls.Count; // gets total number of downloads
+            numDownloaded = 0; // sets the counter for downloaded files (-1: starts at 0) (0: starts at 1)
 
-            if(!Directory.Exists(Path_TempDownload))
+            if (!Directory.Exists(Path_TempDownload))
                 Directory.CreateDirectory(Path_TempDownload);
 
             downloadFile();
@@ -1487,11 +1518,13 @@ namespace spNLauncherArma3
             }
 
             // End of the download
+            Thread.Sleep(500);
             Install();
         }
 
         void download_file_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            prb_progressBar_All.Value = (numDownloaded * 100) / numDownloads;
             downloadUrls.Dequeue();
             SaveDownloadQueue();
 
@@ -1559,15 +1592,17 @@ namespace spNLauncherArma3
                 txt_percentageStatus.Text = "";
             }
 
-            prb_progressBar.Value = (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0);
+            prb_progressBar_File.Value = (int)(((float)e.BytesReceived / (float)bytes_total) * 100.0);
         }
 
         void Install()
         {
             isDownloading = false;
             progressStatusText("Installing files...");
-            prb_progressBar.Value = 0;
-            prb_progressBar.Style = ProgressBarStyle.Marquee;
+            prb_progressBar_File.Value = 0;
+            prb_progressBar_File.Style = ProgressBarStyle.Marquee;
+
+            prb_progressBar_All.Value = 0;
 
             //Lock Custom Directory
             txtb_modsDirectory.Enabled = false;
@@ -1580,13 +1615,13 @@ namespace spNLauncherArma3
         void ztundread()
         {
             int i = 0;
-            prb_progressBar.Value = 0;
-            prb_progressBar.Style = ProgressBarStyle.Continuous;
+            prb_progressBar_File.Value = 0;
+            prb_progressBar_File.Style = ProgressBarStyle.Continuous;
             Random rnd = new Random();
 
             while (i < 100)
             {
-                prb_progressBar.Value = i++;
+                prb_progressBar_File.Value = i++;
                 Thread.Sleep(rnd.Next(10, 80));
             }
         }
@@ -1601,6 +1636,8 @@ namespace spNLauncherArma3
 
             bool allFine = true;
             string aux_ModsFolder = AddonsFolder;
+
+            int nall = 0;
 
             try
             {
@@ -1620,10 +1657,10 @@ namespace spNLauncherArma3
 
                             progressStatusText("Extracting new files...");
 
-                            progressBarMinimum(0);
-                            progressBarMaximum(archive.Entries.Count);
+                            progressBarFileMinimum(0);
+                            progressBarFileMaximum(archive.Entries.Count);
                             string filePath = "";
-                            int i = 0;
+                            int nfile = 0;
 
                             if (zipFile.Contains(activePack))
                                 aux_ModsFolder = GameFolder;
@@ -1673,17 +1710,19 @@ namespace spNLauncherArma3
                                 { MessageBox.Show(ex.Message); }
 
                                 Thread.Sleep(10);
-                                progressBarValue(i++);
+                                progressBarFileValue(nfile++);
                             }
 
-                            progressBarMaximum(100);
+                            progressBarAllValue(((nall + 1) * 100) / (Directory.GetFiles(Path_TempDownload).Length + 1));
+                            progressBarFileMaximum(100);
                             currentFileText("");
                         }
                     else
                         break;
                 }
 
-                progressBarValue(100);
+                progressBarAllValue(100);
+                progressBarFileValue(100);
                 Thread.Sleep(2000);
 
                 #region isTFR
@@ -1694,7 +1733,7 @@ namespace spNLauncherArma3
                     {
                         try
                         {
-                            prb_progressBar.State = ProgressBarState.Normal;
+                            prb_progressBar_File.State = ProgressBarState.Normal;
                             progressStatusText("Installing TeamSpeak 3 plugins...");
                             Thread.Sleep(1500);
 
@@ -1712,7 +1751,7 @@ namespace spNLauncherArma3
                         }
                         catch
                         {
-                            prb_progressBar.State = ProgressBarState.Pause;
+                            prb_progressBar_File.State = ProgressBarState.Pause;
                             if (MessageBox.Show("Disable all TFR plugins in your TeamSpeak 3 before continue.\n\n • Go to \"Settings\"\n • Open the \"Plugins\" window\n • Disable all Task Force Radio plugins\n • Hit \"Close\"", "Found a problem with TFR installation", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Retry)
                                 awaitTSPlugin = true;
                             else
@@ -1745,7 +1784,7 @@ namespace spNLauncherArma3
                         process.Start();
 
                         progressStatusText("Installing RHS AFRF...");
-                        progressBarStyle(ProgressBarStyle.Marquee);
+                        progressBarFileStyle(ProgressBarStyle.Marquee);
                         process.WaitForExit();
                     }
                     catch (Exception ex)
@@ -1769,7 +1808,7 @@ namespace spNLauncherArma3
                         process.Start();
 
                         progressStatusText("Installing RHS USF...");
-                        progressBarStyle(ProgressBarStyle.Marquee);
+                        progressBarFileStyle(ProgressBarStyle.Marquee);
                         process.WaitForExit();
                     }
                     catch (Exception ex)
@@ -1781,7 +1820,7 @@ namespace spNLauncherArma3
             }
             catch (Exception ex)
             {
-                progressBarState(ProgressBarState.Error);
+                progressBarFileState(ProgressBarState.Error);
                 e.Cancel = true;
                 allFine = false;
                 progressStatusText("Something went wrong. Please try again.");
@@ -1803,7 +1842,7 @@ namespace spNLauncherArma3
 
         private void backgroundInstaller_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            prb_progressBar.State = ProgressBarState.Normal;
+            prb_progressBar_File.State = ProgressBarState.Normal;
 
             if(downloadJSRS)
                 btn_downloadJSRS.Enabled = true;
@@ -1821,8 +1860,8 @@ namespace spNLauncherArma3
             if (!e.Cancelled && isLaunch && pref_startGameAfterDownloadsAreCompleted.Checked)
             {
                 isLaunch = false;
-                prb_progressBar.Style = ProgressBarStyle.Marquee;
-                prb_progressBar.Value = 50;
+                prb_progressBar_File.Style = ProgressBarStyle.Marquee;
+                prb_progressBar_File.Value = 50;
                 txt_progressStatus.Text = "Launching game...";
 
                 delayLaunch.Start();
@@ -1838,10 +1877,10 @@ namespace spNLauncherArma3
                 GetAddons();
             }
 
-
-            prb_progressBar.Value = 0;
-            prb_progressBar.State = ProgressBarState.Normal;
-            prb_progressBar.Style = ProgressBarStyle.Continuous;
+            prb_progressBar_All.Value = 0;
+            prb_progressBar_File.Value = 0;
+            prb_progressBar_File.State = ProgressBarState.Normal;
+            prb_progressBar_File.Style = ProgressBarStyle.Continuous;
             btn_Launch.Enabled = true;
 
             //Unlock Custom Directory
@@ -1855,8 +1894,8 @@ namespace spNLauncherArma3
             delayLaunch.Stop();
             PrepareLaunch.LaunchGame(Arguments, this, txt_progressStatus, btn_Launch, serverInfo, tsInfo);
 
-            prb_progressBar.Style = ProgressBarStyle.Continuous;
-            prb_progressBar.Value = 0;
+            prb_progressBar_File.Style = ProgressBarStyle.Continuous;
+            prb_progressBar_File.Value = 0;
             txt_progressStatus.Text = "Waiting for orders";
         }
 
@@ -2150,7 +2189,7 @@ namespace spNLauncherArma3
                 {
                     try
                     {
-                        prb_progressBar.State = ProgressBarState.Normal;
+                        prb_progressBar_File.State = ProgressBarState.Normal;
                         progressStatusText("Installing TeamSpeak 3 plugins...");
                         Thread.Sleep(1500);
 
@@ -2170,7 +2209,7 @@ namespace spNLauncherArma3
                     }
                     catch
                     {
-                        prb_progressBar.State = ProgressBarState.Pause;
+                        prb_progressBar_File.State = ProgressBarState.Pause;
                         if (MessageBox.Show("Disable all TFR plugins in your TeamSpeak 3 before continue.\n\n • Go to \"Settings\"\n • Open the \"Plugins\" window\n • Disable all Task Force Radio plugins\n • Hit \"Close\"", "Found a problem with TFR installation", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Retry)
                             awaitTSPlugin = true;
                         else
@@ -2187,8 +2226,8 @@ namespace spNLauncherArma3
                     }
                 } while (awaitTSPlugin);
 
-                prb_progressBar.Style = ProgressBarStyle.Continuous;
-                prb_progressBar.Value = 0;
+                prb_progressBar_File.Style = ProgressBarStyle.Continuous;
+                prb_progressBar_File.Value = 0;
                 txt_progressStatus.Text = "Waiting for orders";
             }
             else
