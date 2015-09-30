@@ -37,7 +37,7 @@ namespace spNLauncherArma3
         private string modsDir_previousDir = "";
 
         private bool isLaunch = false;
-        public bool isDownloading = false;
+        private bool isDownloading = false;
 
         private bool downloadJSRS = false;
         private bool downloadBlastcore = false;
