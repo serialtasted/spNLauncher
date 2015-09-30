@@ -52,7 +52,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>spn_icon.ico</ApplicationIcon>
+    <ApplicationIcon>ptrangers.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -379,6 +379,7 @@
     <None Include="Resources\check-circle1.png" />
     <None Include="Resources\archive_hover.png" />
     <None Include="Resources\equalizer.png" />
+    <Content Include="ptrangers.ico" />
     <Content Include="spn_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
